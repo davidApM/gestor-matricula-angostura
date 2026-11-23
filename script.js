@@ -185,6 +185,10 @@ async function loadFromGoogleSheets(url) {
             if (st.nie && !st.correo_clases) {
                 st.correo_clases = `${st.nie}@clases.edu.sv`;
             }
+            // Promover automáticamente al siguiente grado para Matrícula 2027 (si no repite)
+            if (st.grado && normalizeYesNo(st.repite_grado) !== 'SÍ') {
+                st.grado = promoteGradeFor2027(st.grado);
+            }
             return st;
         });
 
@@ -916,4 +920,31 @@ function setupAutoGenderListener() {
             }
         });
     }
+}
+
+function promoteGradeFor2027(gradeStr) {
+    const norm = normalizeText(gradeStr);
+    if (!norm) return gradeStr;
+
+    // Evitar doble promoción si ya está en 2° año de bachillerato
+    if (norm.includes('2') && norm.includes('bachillerato')) return '2° Año de Bachillerato "A"';
+    if (norm.includes('1') && norm.includes('bachillerato')) return '2° Año de Bachillerato "A"';
+
+    // Parvularia
+    if (norm.includes('parvularia 4')) return 'Parvularia 5';
+    if (norm.includes('parvularia 5')) return 'Parvularia 6';
+    if (norm.includes('parvularia 6')) return '1° Grado "A"';
+
+    // Educación Básica (1° a 9° Grado)
+    if (norm.includes('1') && norm.includes('grado')) return '2° Grado "A"';
+    if (norm.includes('2') && norm.includes('grado')) return '3° Grado "A"';
+    if (norm.includes('3') && norm.includes('grado')) return '4° Grado "A"';
+    if (norm.includes('4') && norm.includes('grado')) return '5° Grado "A"';
+    if (norm.includes('5') && norm.includes('grado')) return '6° Grado "A"';
+    if (norm.includes('6') && norm.includes('grado')) return '7° Grado "A"';
+    if (norm.includes('7') && norm.includes('grado')) return '8° Grado "A"';
+    if (norm.includes('8') && norm.includes('grado')) return '9° Grado "A"';
+    if (norm.includes('9') && norm.includes('grado')) return '1° Año de Bachillerato "A"';
+
+    return gradeStr;
 }
