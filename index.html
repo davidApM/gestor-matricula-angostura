@@ -12,12 +12,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- Google Fonts: Inter para UI y Arimo/Arial para el documento oficial -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
+  
+  <!-- Enlace a tu archivo de estilos externo -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- NOTIFICACIÓN FLOTANTE (Reemplazo elegante de alert/confirm) -->
+  <!-- NOTIFICACIÓN FLOTANTE -->
   <div id="toastContainer" class="no-print fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm"></div>
 
   <!-- BARRA SUPERIOR DE CONTROL (NO SE IMPRIME) -->
@@ -131,27 +132,6 @@
         </div>
       </div>
 
-      <!-- Tarjeta de Personalización de Logos Oficiales -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-        <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-image text-slate-500"></i> Escudos / Logos de Encabezado
-        </h3>
-        <p class="text-xs text-slate-500 mb-3">Opcional: sube los logos oficiales para que queden guardados automáticamente en tu navegador.</p>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="border border-dashed border-slate-300 hover:border-blue-500 rounded-lg p-2 text-center cursor-pointer transition bg-slate-50">
-            <i class="fa-solid fa-shield-halved text-slate-500 text-sm block mb-1"></i>
-            <span class="text-xs font-medium text-slate-700 block">Logo MINEDUCYT</span>
-            <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event, 'leftLogo')" />
-          </label>
-          <label class="border border-dashed border-slate-300 hover:border-blue-500 rounded-lg p-2 text-center cursor-pointer transition bg-slate-50">
-            <i class="fa-solid fa-school text-slate-500 text-sm block mb-1"></i>
-            <span class="text-xs font-medium text-slate-700 block">Logo Centro Educ.</span>
-            <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event, 'rightLogo')" />
-          </label>
-        </div>
-        <button onclick="resetLogos()" class="mt-2 text-xs text-slate-400 hover:text-slate-600 underline cursor-pointer">Restaurar logos predeterminados</button>
-      </div>
-
       <!-- Guía rápida -->
       <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900 space-y-1.5">
         <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-blue-600"></i> Consejos rápidos:</p>
@@ -170,6 +150,11 @@
         <span id="editingStatusBadge" class="bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full">Modo: Nuevo Registro</span>
       </div>
 
+      <!-- Hint para teléfonos móviles -->
+      <div class="no-print mobile-swipe-hint text-center text-xs font-bold text-blue-700 bg-blue-100 p-2.5 rounded-t-lg animate-pulse border-b border-blue-200">
+        <i class="fa-solid fa-arrows-left-right mr-1"></i> Desliza la hoja a los lados para ver y llenar todo
+      </div>
+
       <div id="singleSheetWrapper" class="sheet-scroll-container">
         <!-- HOJA CARTA OFICIAL -->
         <div id="fichaFormSheet" class="ficha-sheet">
@@ -177,17 +162,10 @@
           <!-- ENCABEZADO OFICIAL -->
           <div class="flex items-center justify-between gap-2 mb-2">
             <!-- Escudo / Logo Izquierdo (MINEDUCYT) -->
-            <div class="w-24 flex-shrink-0 flex items-center justify-start">
-              <img id="leftLogoImg" src="" alt="Logo MINEDUCYT" class="max-h-14 max-w-full object-contain hidden" />
-              <div id="leftLogoPlaceholder" class="flex items-center gap-1.5 text-slate-700">
-                <svg class="w-9 h-9 text-slate-700" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="32,6 54,48 10,48" fill="#f8fafc"/>
-                  <circle cx="32" cy="34" r="8"/>
-                  <path d="M14 52 Q32 58 50 52" stroke-linecap="round"/>
-                </svg>
-                <div class="text-[6.5pt] leading-tight font-bold uppercase text-slate-700">
-                  MINISTERIO<br/>DE EDUCACIÓN,<br/>CIENCIA Y<br/>TECNOLOGÍA
-                </div>
+            <div class="w-32 flex-shrink-0 flex items-center justify-start gap-1.5">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Escudo_de_El_Salvador.svg" alt="Escudo El Salvador" class="h-12 w-auto object-contain" />
+              <div class="text-[6pt] leading-tight font-bold uppercase text-slate-800">
+                MINISTERIO<br/>DE EDUCACIÓN,<br/>CIENCIA Y<br/>TECNOLOGÍA
               </div>
             </div>
 
@@ -200,12 +178,11 @@
             </div>
 
             <!-- Logo Derecho (Centro Educativo) -->
-            <div class="w-20 flex-shrink-0 flex items-center justify-end">
-              <img id="rightLogoImg" src="" alt="Logo Centro Educativo" class="max-h-14 max-w-full object-contain hidden" />
-              <div id="rightLogoPlaceholder" class="w-14 h-14 rounded-full border-2 border-slate-700 flex flex-col items-center justify-center text-center p-1 bg-slate-50">
-                <span class="text-[5pt] font-bold leading-none text-slate-800">C.E. CASERÍO</span>
-                <i class="fa-solid fa-book-open text-emerald-700 text-xs my-0.5"></i>
-                <span class="text-[5pt] font-bold leading-none text-slate-800">LA ANGOSTURA</span>
+            <div class="w-32 flex-shrink-0 flex items-center justify-end">
+              <div class="w-14 h-14 rounded-full border-[1.5px] border-slate-900 flex flex-col items-center justify-center text-center p-0.5 bg-transparent">
+                <span class="text-[4.5pt] font-extrabold leading-[1.1] text-slate-900">C.E. CASERÍO</span>
+                <i class="fa-solid fa-book-open-reader text-slate-800 text-[11px] my-0.5"></i>
+                <span class="text-[4.5pt] font-extrabold leading-[1.1] text-slate-900">LA ANGOSTURA</span>
               </div>
             </div>
           </div>
@@ -552,7 +529,7 @@
     </div>
   </div>
 
-  <!-- LÓGICA DE LA APLICACIÓN -->
+  <!-- LÓGICA DE LA APLICACIÓN (Archivo externo) -->
   <script src="script.js"></script>
 </body>
 </html>
