@@ -185,6 +185,10 @@ async function loadFromGoogleSheets(url) {
             if (st.nie && !st.correo_clases) {
                 st.correo_clases = `${st.nie}@clases.edu.sv`;
             }
+            // Deducir género automáticamente si está vacío
+            if (!st.genero && st.primer_nombre) {
+                st.genero = inferGenderFromName(st.primer_nombre);
+            }
             // Promover automáticamente al siguiente grado para Matrícula 2027 (si no repite)
             if (st.grado && normalizeYesNo(st.repite_grado) !== 'SÍ') {
                 st.grado = promoteGradeFor2027(st.grado);
