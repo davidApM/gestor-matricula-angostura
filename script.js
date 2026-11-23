@@ -61,7 +61,7 @@ const FIELD_DEFINITIONS = [
 // 2. ESTADO GLOBAL DE LA APLICACIÓN Y CONEXIÓN GOOGLE SHEETS (APPS SCRIPT)
 // =========================================================================
 const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
-const ACCESS_PIN = "10844"; // Debe coincidir con el PIN_SECRETO de tu Apps Script
+let ACCESS_PIN = ""; // Se asigna al desbloquear la pantalla de acceso
 
 let studentsDB = [];
 let currentStudentIndex = -1; // -1 = Nuevo estudiante
@@ -129,28 +129,74 @@ const SAMPLE_STUDENTS = [
 window.addEventListener('DOMContentLoaded', () => {
     loadSavedLogos();
     setupAutoGenderListener();
-    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL.trim() !== "") {
-        loadFromGoogleSheets(GOOGLE_APPS_SCRIPT_URL.trim());
+
+    // Si ya desbloqueó previamente en esta sesión, entrar directo
+    const savedPin = sessionStorage.getItem('angostura_pin');
+    if (savedPin) {
+        ACCESS_PIN = savedPin;
+        const overlay = document.getElementById('pinLockOverlay');
+        if (overlay) overlay.classList.add('hidden');
+        initAppAfterUnlock();
     } else {
-        studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
-        updateGradeFilters();
-        renderStudentsList();
-        if (studentsDB.length > 0) {
-            selectStudent(0);
-        }
+        const pinInput = document.getElementById('pinLoginInput');
+        if (pinInput) pinInput.focus();
     }
 });
 
-async function loadFromGoogleSheets(url) {
+function verifyPinAccess() {
+    const input = document.getElementById('pinLoginInput');
+    const errorMsg = document.getElementById('pinErrorMsg');
+    const entered = input ? input.value.trim() : '';
+
+    if (!entered) {
+        if (errorMsg) {
+            errorMsg.textContent = 'Por favor, escribe el PIN.';
+            errorMsg.classList.remove('hidden');
+        }
+        return;
+    }
+
+    ACCESS_PIN = entered;
+    if (errorMsg) errorMsg.classList.add('hidden');
+    initAppAfterUnlock(true);
+}
+
+function initAppAfterUnlock(isManualLogin = false) {
+    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL.trim() !== "") {
+        loadFromGoogleSheets(GOOGLE_APPS_SCRIPT_URL.trim(), isManualLogin);
+    } else {
+        const overlay = document.getElementById('pinLockOverlay');
+        if (overlay) overlay.classList.add('hidden');
+        studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
+        updateGradeFilters();
+        renderStudentsList();
+        if (studentsDB.length > 0) selectStudent(0);
+    }
+}
+
+async function loadFromGoogleSheets(url, isManualLogin = false) {
     try {
-        showToast('Cargando base de datos segura desde Google Sheets...', 'info');
+        showToast('Verificando acceso y cargando datos...', 'info');
         const response = await fetch(`${url}?pin=${encodeURIComponent(ACCESS_PIN)}`);
         const result = await response.json();
 
         if (result.status !== 'success') {
-            showToast('Error de acceso: ' + (result.message || 'PIN incorrecto'), 'error');
+            sessionStorage.removeItem('angostura_pin');
+            ACCESS_PIN = '';
+            const overlay = document.getElementById('pinLockOverlay');
+            const errorMsg = document.getElementById('pinErrorMsg');
+            if (overlay) overlay.classList.remove('hidden');
+            if (errorMsg) {
+                errorMsg.textContent = result.message || 'PIN incorrecto. Verifica con dirección.';
+                errorMsg.classList.remove('hidden');
+            }
             return;
         }
+
+        // PIN válido: guardar en la sesión actual y ocultar bloqueo
+        sessionStorage.setItem('angostura_pin', ACCESS_PIN);
+        const overlay = document.getElementById('pinLockOverlay');
+        if (overlay) overlay.classList.add('hidden');
 
         const jsonMatrix = result.data;
         if (!jsonMatrix || jsonMatrix.length < 2) {
