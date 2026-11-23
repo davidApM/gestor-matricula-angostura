@@ -165,6 +165,9 @@ async function loadFromGoogleSheets(url) {
         const headers = jsonMatrix[0].map(h => normalizeText(h));
         const rows = jsonMatrix.slice(1).filter(row => row.some(cell => String(cell).trim() !== ''));
 
+        // Detectar si los datos ya fueron guardados en la hoja principal (tiene 48 encabezados)
+        const isAlreadySavedInMainSheet = headers.length >= 40;
+
         const colMap = {};
         FIELD_DEFINITIONS.forEach(field => {
             const normLabel = normalizeText(field.label);
@@ -189,8 +192,8 @@ async function loadFromGoogleSheets(url) {
             if (!st.genero && st.primer_nombre) {
                 st.genero = inferGenderFromName(st.primer_nombre);
             }
-            // Promover automáticamente al siguiente grado para Matrícula 2027 (si no repite)
-            if (st.grado && normalizeYesNo(st.repite_grado) !== 'SÍ') {
+            // Promover SOLO si vienen crudos de las pestañas 2026 (no si ya se guardaron en la hoja principal)
+            if (!isAlreadySavedInMainSheet && st.grado && normalizeYesNo(st.repite_grado) !== 'SÍ') {
                 st.grado = promoteGradeFor2027(st.grado);
             }
             return st;
