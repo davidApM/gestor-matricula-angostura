@@ -1,67 +1,9 @@
 // =========================================================================
-// 1. DEFINICIÓN DE CAMPOS OFICIALES Y SINÓNIMOS PARA MAPEO INTELIGENTE
+// 2. ESTADO GLOBAL DE LA APLICACIÓN Y CONEXIÓN GOOGLE SHEETS (APPS SCRIPT)
 // =========================================================================
-const FIELD_DEFINITIONS = [
-    { key: 'nie', label: 'NIE', aliases: ['nie', 'codigo estudiante', 'id estudiante'] },
-    { key: 'grado', label: 'Grado a matricular', aliases: ['grado', 'grado al que se va a matricular', 'grado 2027', 'nivel', 'seccion'] },
-    { key: 'primer_apellido', label: 'Primer apellido', aliases: ['primer apellido', 'apellido 1', 'apellido1', 'apellidos'] },
-    { key: 'segundo_apellido', label: 'Segundo apellido', aliases: ['segundo apellido', 'apellido 2', 'apellido2'] },
-    { key: 'primer_nombre', label: 'Primer nombre', aliases: ['primer nombre', 'nombre 1', 'nombre1', 'nombres'] },
-    { key: 'segundo_nombre', label: 'Segundo nombre', aliases: ['segundo nombre', 'nombre 2', 'nombre2'] },
-    { key: 'estudiante_nuevo', label: 'Estudiante nuevo (SÍ/NO)', aliases: ['estudiante nuevo', 'nuevo', 'nuevo ingreso'] },
-    { key: 'repite_grado', label: 'Repite grado (SÍ/NO)', aliases: ['repite grado', 'repite', 'repitente'] },
-    { key: 'extranjero', label: 'Extranjero (SÍ/NO)', aliases: ['extranjero'] },
-    { key: 'distrito_nacimiento', label: 'Distrito de nacimiento', aliases: ['distrito de nacimiento', 'municipio de nacimiento', 'lugar nacimiento'] },
-    { key: 'fecha_nacimiento', label: 'Fecha de nacimiento', aliases: ['fecha de nacimiento', 'fecha nacimiento', 'nacimiento'] },
-    { key: 'genero', label: 'Género', aliases: ['genero', 'sexo'] },
-    { key: 'grupo_sanguineo', label: 'Grupo sanguíneo', aliases: ['grupo sanguineo', 'tipo sangre', 'sangre'] },
-    { key: 'direccion_estudiante', label: 'Dirección del estudiante', aliases: ['direccion del estudiante', 'direccion', 'domicilio', 'caserio', 'canton'] },
-    { key: 'sufre_enfermedad', label: '¿Sufre enfermedad? (SÍ/NO)', aliases: ['sufre alguna enfermedad', 'enfermedad', 'padece enfermedad'] },
-    { key: 'especifique_enfermedad', label: 'Especifique enfermedad', aliases: ['especifique enfermedad', 'detalle enfermedad', 'cual enfermedad'] },
-    { key: 'consume_medicamentos', label: 'Consume medicamentos (SÍ/NO)', aliases: ['consume medicamentos', 'medicamentos'] },
-    { key: 'frecuencia_medicamentos', label: 'Frecuencia y horario medicamentos', aliases: ['especifique frecuencia y horario', 'frecuencia medicamentos', 'horario medicamentos'] },
-    { key: 'diagnostico_medico', label: 'Diagnóstico médico impide ejercicio (SÍ/NO)', aliases: ['diagnostico medico', 'impide ejercitarse', 'desarrollo corporal'] },
-    { key: 'correo_clases', label: 'Correo @clases', aliases: ['correo @clases', 'correo clases', 'correo', 'email'] },
-    { key: 'vacunas_completas', label: 'Vacunas completas (SÍ/NO)', aliases: ['vacunas completas', 'vacunas'] },
-    { key: 'problemas_visuales', label: 'Problemas visuales (SÍ/NO)', aliases: ['problemas visuales', 'vista', 'lentes'] },
-    { key: 'presenta_discapacidad', label: 'Presenta discapacidad', aliases: ['presenta discapacidad', 'discapacidad'] },
-    // Padre
-    { key: 'padre_documento', label: 'Padre - Documento (DUI)', aliases: ['padre documento', 'dui padre', 'documento padre'] },
-    { key: 'padre_primer_apellido', label: 'Padre - Primer apellido', aliases: ['padre primer apellido', 'primer apellido padre'] },
-    { key: 'padre_segundo_apellido', label: 'Padre - Segundo apellido', aliases: ['padre segundo apellido', 'segundo apellido padre'] },
-    { key: 'padre_nombres', label: 'Padre - Nombres', aliases: ['padre nombres', 'nombres padre', 'nombre padre'] },
-    { key: 'padre_telefono', label: 'Padre - Teléfono', aliases: ['padre telefono', 'telefono padre', 'celular padre'] },
-    { key: 'padre_direccion', label: 'Padre - Dirección', aliases: ['padre direccion', 'direccion padre'] },
-    { key: 'padre_nivel_educativo', label: 'Padre - Nivel educativo', aliases: ['padre nivel educativo', 'nivel educativo padre', 'escolaridad padre'] },
-    // Madre
-    { key: 'madre_documento', label: 'Madre - Documento (DUI)', aliases: ['madre documento', 'dui madre', 'documento madre'] },
-    { key: 'madre_primer_apellido', label: 'Madre - Primer apellido', aliases: ['madre primer apellido', 'primer apellido madre'] },
-    { key: 'madre_segundo_apellido', label: 'Madre - Segundo apellido', aliases: ['madre segundo apellido', 'segundo apellido madre'] },
-    { key: 'madre_nombres', label: 'Madre - Nombres', aliases: ['madre nombres', 'nombres madre', 'nombre madre'] },
-    { key: 'madre_telefono', label: 'Madre - Teléfono', aliases: ['madre telefono', 'telefono madre', 'celular madre'] },
-    { key: 'madre_direccion', label: 'Madre - Dirección', aliases: ['madre direccion', 'direccion madre'] },
-    { key: 'madre_nivel_educativo', label: 'Madre - Nivel educativo', aliases: ['madre nivel educativo', 'nivel educativo madre', 'escolaridad madre'] },
-    // Representante
-    { key: 'rep_documento', label: 'Representante - Documento (DUI)', aliases: ['representante documento', 'rep documento', 'dui representante', 'dui encargado'] },
-    { key: 'rep_primer_apellido', label: 'Representante - Primer apellido', aliases: ['representante primer apellido', 'rep primer apellido'] },
-    { key: 'rep_segundo_apellido', label: 'Representante - Segundo apellido', aliases: ['representante segundo apellido', 'rep segundo apellido'] },
-    { key: 'rep_nombres', label: 'Representante - Nombres', aliases: ['representante nombres', 'rep nombres', 'nombre representante', 'encargado'] },
-    { key: 'rep_telefono', label: 'Representante - Teléfono', aliases: ['representante telefono', 'rep telefono', 'telefono representante', 'telefono encargado'] },
-    { key: 'rep_direccion', label: 'Representante - Dirección', aliases: ['representante direccion', 'rep direccion', 'direccion representante'] },
-    { key: 'rep_nivel_educativo', label: 'Representante - Nivel educativo', aliases: ['representante nivel educativo', 'rep nivel educativo'] },
-    { key: 'rep_parentesco', label: 'Parentesco del representante', aliases: ['parentesco', 'que parentesco tiene'] },
-    // Autorización y firmas
-    { key: 'autoriza_foto', label: 'Autoriza fotografía (SÍ/NO)', aliases: ['autoriza foto', 'fotografiado', 'autorizo foto'] },
-    { key: 'compromiso_nombre', label: 'Nombre en Compromiso (Yo ___)', aliases: ['compromiso nombre', 'nombre compromiso'] },
-    { key: 'docente_nombre', label: 'Nombre Docente Responsable', aliases: ['docente responsable', 'docente nombre', 'docente'] },
-    { key: 'encargado_firma_nombre', label: 'Nombre Firma Encargado', aliases: ['encargado firma', 'firma encargado', 'padre madre o encargado'] }
-];
-
-// =========================================================================
-// 2. ESTADO GLOBAL DE LA APLICACIÓN Y CONEXIÓN GOOGLE SHEETS
-// =========================================================================
-// PEGA AQUÍ EL ENLACE CSV DE TU GOOGLE SHEETS ENTRE LAS COMILLAS:
-const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiV1gHmcnqoDrG7-E4uHZ1IdsSaKLvvdlYOkDRz6iZHR10TcXPt2VAhN-jv20ibg/pubhtml?gid=1836966899&single=true";
+// PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT (termina en /exec):
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
+const ACCESS_PIN = "10844"; // Debe coincidir con el PIN_SECRETO de tu Apps Script
 
 let studentsDB = [];
 let currentStudentIndex = -1; // -1 = Nuevo estudiante
@@ -230,8 +172,8 @@ const SAMPLE_STUDENTS = [
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
     loadSavedLogos();
-    if (GOOGLE_SHEETS_CSV_URL && GOOGLE_SHEETS_CSV_URL.trim() !== "") {
-        loadFromGoogleSheets(GOOGLE_SHEETS_CSV_URL.trim());
+    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL.trim() !== "") {
+        loadFromGoogleSheets(GOOGLE_APPS_SCRIPT_URL.trim());
     } else {
         // Cargar ejemplos iniciales si aún no se configura Google Sheets
         studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
@@ -245,25 +187,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function loadFromGoogleSheets(url) {
     try {
-        showToast('Conectando con Google Sheets...', 'info');
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('No se pudo acceder al enlace de Google Sheets');
-        const csvText = await response.text();
+        showToast('Cargando base de datos segura desde Google Sheets...', 'info');
+        const response = await fetch(`${url}?pin=${encodeURIComponent(ACCESS_PIN)}`);
+        const result = await response.json();
 
-        const workbook = XLSX.read(csvText, { type: 'string' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const jsonMatrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+        if (result.status !== 'success') {
+            showToast('Error de acceso: ' + (result.message || 'PIN incorrecto'), 'error');
+            return;
+        }
 
-        if (jsonMatrix.length < 2) {
-            showToast('La hoja de Google Sheets está vacía.', 'warning');
+        const jsonMatrix = result.data;
+        if (!jsonMatrix || jsonMatrix.length < 2) {
+            studentsDB = [];
+            updateGradeFilters();
+            renderStudentsList();
+            createNewStudent();
+            showToast('Conectado a Google Sheets (La hoja aún no tiene alumnos).', 'info');
             return;
         }
 
         const headers = jsonMatrix[0].map(h => normalizeText(h));
         const rows = jsonMatrix.slice(1).filter(row => row.some(cell => String(cell).trim() !== ''));
 
-        // Mapeo automático inteligente desde Google Sheets
         const colMap = {};
         FIELD_DEFINITIONS.forEach(field => {
             const normLabel = normalizeText(field.label);
@@ -286,10 +231,37 @@ async function loadFromGoogleSheets(url) {
         updateGradeFilters();
         renderStudentsList();
         if (studentsDB.length > 0) selectStudent(0);
-        showToast(`¡Conectado! Se cargaron ${studentsDB.length} estudiantes desde Google Sheets.`, 'success');
+        showToast(`¡Conectado! ${studentsDB.length} estudiantes cargados desde Google Sheets.`, 'success');
     } catch (err) {
         console.error(err);
-        showToast('Error al cargar desde Google Sheets. Verifica que esté publicado en la web como CSV.', 'error');
+        showToast('Error al conectar con Google Apps Script.', 'error');
+    }
+}
+
+async function syncToGoogleSheets() {
+    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.trim() === "") return;
+    try {
+        showToast('Guardando en Google Sheets...', 'info');
+        const headers = FIELD_DEFINITIONS.map(f => f.label);
+        const rows = studentsDB.map(st => FIELD_DEFINITIONS.map(f => st[f.key] || ''));
+
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL.trim(), {
+            method: 'POST',
+            body: JSON.stringify({
+                pin: ACCESS_PIN,
+                headers: headers,
+                rows: rows
+            })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            showToast('¡Sincronizado y guardado en Google Sheets!', 'success');
+        } else {
+            showToast('No se pudo guardar en Google Sheets: ' + result.message, 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Error de red al guardar en Google Sheets.', 'error');
     }
 }
 
@@ -561,14 +533,32 @@ function saveCurrentStudentToDB() {
     if (currentStudentIndex === -1) {
         studentsDB.unshift(record);
         currentStudentIndex = 0;
-        showToast('Nuevo estudiante agregado a la base de datos.', 'success');
+        showToast('Nuevo estudiante agregado localmente.', 'success');
     } else {
         studentsDB[currentStudentIndex] = record;
-        showToast('Cambios del estudiante guardados en la base de datos.', 'success');
+        showToast('Cambios guardados localmente.', 'success');
     }
 
     updateGradeFilters();
     selectStudent(currentStudentIndex);
+    syncToGoogleSheets(); // Guarda automáticamente en la nube
+}
+
+function deleteCurrentStudent() {
+    if (currentStudentIndex < 0 || currentStudentIndex >= studentsDB.length) return;
+    const removed = studentsDB.splice(currentStudentIndex, 1);
+    updateGradeFilters();
+    if (studentsDB.length > 0) {
+        selectStudent(Math.min(currentStudentIndex, studentsDB.length - 1));
+    } else {
+        createNewStudent();
+    }
+    showToast(`Registro eliminado (${removed[0].primer_nombre || 'Estudiante'}).`, 'info');
+    syncToGoogleSheets(); // Actualiza la nube al eliminar
+}
+
+updateGradeFilters();
+selectStudent(currentStudentIndex);
 }
 
 function deleteCurrentStudent() {
