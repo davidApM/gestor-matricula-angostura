@@ -58,14 +58,17 @@ const FIELD_DEFINITIONS = [
 ];
 
 // =========================================================================
-// 2. ESTADO GLOBAL DE LA APLICACIÓN
+// 2. ESTADO GLOBAL DE LA APLICACIÓN Y CONEXIÓN GOOGLE SHEETS
 // =========================================================================
+// PEGA AQUÍ EL ENLACE CSV DE TU GOOGLE SHEETS ENTRE LAS COMILLAS:
+const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiV1gHmcnqoDrG7-E4uHZ1IdsSaKLvvdlYOkDRz6iZHR10TcXPt2VAhN-jv20ibg/pubhtml?gid=1836966899&single=true";
+
 let studentsDB = [];
 let currentStudentIndex = -1; // -1 = Nuevo estudiante
 let rawImportedRows = [];
 let rawImportedHeaders = [];
 
-// Datos de ejemplo precargados para que el usuario pueda probar al instante
+// Datos de ejemplo precargados para que el usuario pueda probar al instante si no usa Google Sheets aún
 const SAMPLE_STUDENTS = [
     {
         nie: '4589210',
@@ -223,18 +226,72 @@ const SAMPLE_STUDENTS = [
 ];
 
 // =========================================================================
-// 3. INICIALIZACIÓN Y GESTIÓN DE LOGOS EN LOCALSTORAGE
+// 3. INICIALIZACIÓN, CARGA DESDE GOOGLE SHEETS Y GESTIÓN DE LOGOS
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
     loadSavedLogos();
-    // Cargar ejemplos iniciales para demostración inmediata
-    studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
-    updateGradeFilters();
-    renderStudentsList();
-    if (studentsDB.length > 0) {
-        selectStudent(0);
+    if (GOOGLE_SHEETS_CSV_URL && GOOGLE_SHEETS_CSV_URL.trim() !== "") {
+        loadFromGoogleSheets(GOOGLE_SHEETS_CSV_URL.trim());
+    } else {
+        // Cargar ejemplos iniciales si aún no se configura Google Sheets
+        studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
+        updateGradeFilters();
+        renderStudentsList();
+        if (studentsDB.length > 0) {
+            selectStudent(0);
+        }
     }
 });
+
+async function loadFromGoogleSheets(url) {
+    try {
+        showToast('Conectando con Google Sheets...', 'info');
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('No se pudo acceder al enlace de Google Sheets');
+        const csvText = await response.text();
+
+        const workbook = XLSX.read(csvText, { type: 'string' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonMatrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+        if (jsonMatrix.length < 2) {
+            showToast('La hoja de Google Sheets está vacía.', 'warning');
+            return;
+        }
+
+        const headers = jsonMatrix[0].map(h => normalizeText(h));
+        const rows = jsonMatrix.slice(1).filter(row => row.some(cell => String(cell).trim() !== ''));
+
+        // Mapeo automático inteligente desde Google Sheets
+        const colMap = {};
+        FIELD_DEFINITIONS.forEach(field => {
+            const normLabel = normalizeText(field.label);
+            let idx = headers.findIndex(nh => nh === normLabel || field.aliases.some(al => normalizeText(al) === nh));
+            if (idx === -1) {
+                idx = headers.findIndex(nh => nh.length > 2 && (normLabel.includes(nh) || field.aliases.some(al => nh.includes(normalizeText(al)))));
+            }
+            colMap[field.key] = idx;
+        });
+
+        studentsDB = rows.map(row => {
+            const st = {};
+            FIELD_DEFINITIONS.forEach(field => {
+                const cIdx = colMap[field.key];
+                st[field.key] = (cIdx >= 0 && row[cIdx] !== undefined && row[cIdx] !== null) ? String(row[cIdx]).trim() : '';
+            });
+            return st;
+        });
+
+        updateGradeFilters();
+        renderStudentsList();
+        if (studentsDB.length > 0) selectStudent(0);
+        showToast(`¡Conectado! Se cargaron ${studentsDB.length} estudiantes desde Google Sheets.`, 'success');
+    } catch (err) {
+        console.error(err);
+        showToast('Error al cargar desde Google Sheets. Verifica que esté publicado en la web como CSV.', 'error');
+    }
+}
 
 function uploadLogo(event, storageKey) {
     const file = event.target.files[0];
@@ -477,7 +534,7 @@ function createNewStudent() {
     const bulkTeacherEl = document.getElementById('bulkTeacherName');
     const bulkGradeEl = document.getElementById('bulkGradeSelect');
     const defaultTeacher = bulkTeacherEl ? bulkTeacherEl.value.trim() : '';
-    const defaultGrade = bulkGradeEl ? bulkGradeEl.value : '';
+    const defaultGrade = bulkGradeEl ? bulkGradeEl.value.trim() : '';
 
     populateSheetForm(document.getElementById('fichaFormSheet'), {
         docente_nombre: defaultTeacher,
@@ -530,18 +587,15 @@ function updateGradeFilters() {
     const grades = [...new Set(studentsDB.map(s => (s.grado || '').trim()).filter(Boolean))].sort();
     const mainSelect = document.getElementById('gradeFilterSelect');
     const batchSelect = document.getElementById('batchGradeSelect');
-    const bulkSelect = document.getElementById('bulkGradeSelect');
+    const bulkDatalist = document.getElementById('bulkGradeDatalist');
 
     const prevMain = mainSelect.value;
     mainSelect.innerHTML = '<option value="">Todos los grados cargados</option>' +
         grades.map(g => `<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join('');
     if (grades.includes(prevMain)) mainSelect.value = prevMain;
 
-    if (bulkSelect) {
-        const prevBulk = bulkSelect.value;
-        bulkSelect.innerHTML = '<option value="">-- Elige un grado --</option>' +
-            grades.map(g => `<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join('');
-        if (grades.includes(prevBulk)) bulkSelect.value = prevBulk;
+    if (bulkDatalist) {
+        bulkDatalist.innerHTML = grades.map(g => `<option value="${escapeHTML(g)}">`).join('');
     }
 
     batchSelect.innerHTML = `<option value="ALL">Todos los estudiantes (${studentsDB.length})</option>` +
@@ -556,7 +610,7 @@ function applyBulkTeacherData() {
     const bulkTeacherEl = document.getElementById('bulkTeacherName');
     if (!bulkGradeEl || !bulkTeacherEl) return;
 
-    const selectedGrade = bulkGradeEl.value;
+    const selectedGrade = bulkGradeEl.value.trim();
     const teacherName = bulkTeacherEl.value.trim();
     const defVacunas = document.getElementById('bulkDefaultVacunas')?.checked || false;
     const defFoto = document.getElementById('bulkDefaultFoto')?.checked || false;
@@ -564,7 +618,7 @@ function applyBulkTeacherData() {
     const defRepite = document.getElementById('bulkDefaultRepite')?.checked || false;
 
     if (!selectedGrade) {
-        showToast('Por favor, selecciona primero el grado al que aplicarás los datos.', 'warning');
+        showToast('Por favor, elige o escribe primero el grado al que aplicarás los datos.', 'warning');
         return;
     }
 
@@ -586,7 +640,7 @@ function applyBulkTeacherData() {
     });
 
     if (updatedCount === 0) {
-        showToast('No se encontraron estudiantes registrados en ese grado.', 'info');
+        showToast('No hay alumnos registrados en ese grado aún. Si creas un alumno nuevo, ya tomará este grado y docente.', 'info');
         return;
     }
 

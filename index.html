@@ -77,6 +77,57 @@
     <aside class="no-print lg:col-span-4 flex flex-col gap-4">
 
       <!-- Tarjeta de Búsqueda y Selección -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-users text-blue-600"></i>
+            Base de Datos (<span id="studentCountBadge">0</span>)
+          </h2>
+          <button onclick="createNewStudent()"
+            class="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer">
+            <i class="fa-solid fa-user-plus"></i> Nuevo Estudiante
+          </button>
+        </div>
+
+        <!-- Buscador rápido -->
+        <div class="relative mb-3">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+          <input type="text" id="searchInput" oninput="filterStudentsList()"
+            placeholder="Buscar por NIE, nombre o apellido..."
+            class="w-full pl-9 pr-8 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+          <button onclick="clearSearch()" id="clearSearchBtn"
+            class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Filtro rápido por grado -->
+        <div class="mb-3">
+          <select id="gradeFilterSelect" onchange="filterStudentsList()"
+            class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-slate-50 text-slate-700 outline-none focus:border-blue-500">
+            <option value="">Todos los grados cargados</option>
+          </select>
+        </div>
+
+        <!-- Lista de estudiantes -->
+        <div id="studentsListContainer"
+          class="max-h-72 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-lg bg-slate-50">
+          <!-- Se llena dinámicamente -->
+        </div>
+
+        <!-- Botones de acción del registro actual -->
+        <div class="mt-4 pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <button onclick="saveCurrentStudentToDB()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition shadow-sm cursor-pointer">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span id="saveBtnLabel">Guardar Cambios en BD</span>
+          </button>
+          <div class="flex gap-2">
+            <button onclick="autoFillCompromiso()"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium py-2 px-2.5 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer"
+              title="Copia el nombre del representante o padre/madre al texto de compromiso y firma">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Autocompletar Firma
+            </button>
             <button onclick="deleteCurrentStudent()" id="deleteStudentBtn"
               class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition cursor-pointer"
               title="Eliminar estudiante de la base en memoria">
@@ -97,10 +148,9 @@
         
         <div class="space-y-2.5 text-xs">
           <div>
-            <label class="font-semibold text-slate-700 block mb-1">1. Selecciona el Grado:</label>
-            <select id="bulkGradeSelect" class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500">
-              <option value="">-- Elige un grado --</option>
-            </select>
+            <label class="font-semibold text-slate-700 block mb-1">1. Elige o escribe el Grado:</label>
+            <input type="text" id="bulkGradeSelect" list="bulkGradeDatalist" placeholder="Ej. 3° Grado &quot;A&quot;" class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500" />
+            <datalist id="bulkGradeDatalist"></datalist>
           </div>
 
           <div>
@@ -446,7 +496,7 @@
                   <span class="mr-1">F.</span>
                   <div class="border-b border-black flex-1 h-4"></div>
                 </div>
-                <div class="text-center font-bold mt-1 text-[8.2pt] uppercase">Lic. Julio César Rivas Orellana</div>
+                <div class="text-center font-bold mt-1 text-[8.2pt] uppercase">Lic. Julio César Orellana Rivas</div>
                 <div class="text-center text-[8pt]">Director del Centro Educativo</div>
               </div>
             </div>
