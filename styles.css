@@ -1,228 +1,260 @@
- body {
-     font-family: 'Inter', sans-serif;
-     background-color: #f1f5f9;
-     color: #0f172a;
- }
+body {
+font-family: 'Inter', sans-serif;
+background-color: #f1f5f9;
+color: #0f172a;
+}
 
- /* Estilos específicos de la Ficha Oficial (Hoja Carta) */
- .ficha-sheet {
-     font-family: Arial, Helvetica, sans-serif;
-     width: 215.9mm;
-     /* Ancho Carta */
-     min-height: 279.4mm;
-     /* Alto Carta */
-     background: #ffffff;
-     color: #000000;
-     padding: 9mm 11mm;
-     box-sizing: border-box;
-     margin: 0 auto;
-     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-     position: relative;
-     font-size: 9pt;
-     line-height: 1.32;
- }
+/* Estilos específicos de la Ficha Oficial (Hoja Carta) */
+.ficha-sheet {
+font-family: Arial, Helvetica, sans-serif;
+width: 215.9mm; /* Ancho Carta */
+min-height: 279.4mm; /* Alto Carta */
+background: #ffffff;
+color: #000000;
+padding: 9mm 11mm;
+box-sizing: border-box;
+margin: 0 auto;
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+position: relative;
+font-size: 9pt;
+line-height: 1.32;
+}
 
- .ficha-section-bar {
-     background-color: #1e293b !important;
-     color: #ffffff !important;
-     font-weight: bold;
-     font-size: 8.5pt;
-     padding: 3px 8px;
-     text-transform: uppercase;
-     letter-spacing: 0.3px;
-     margin-top: 6px;
-     margin-bottom: 6px;
-     -webkit-print-color-adjust: exact;
-     print-color-adjust: exact;
- }
+.ficha-section-bar {
+background-color: #1e293b !important;
+color: #ffffff !important;
+font-weight: bold;
+font-size: 8.5pt;
+padding: 3px 8px;
+text-transform: uppercase;
+letter-spacing: 0.3px;
+margin-top: 6px;
+margin-bottom: 6px;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
 
- /* Líneas editables tipo formulario oficial */
- .ficha-input {
-     border: none;
-     border-bottom: 1px solid #1e293b;
-     background: transparent;
-     font-family: Arial, Helvetica, sans-serif;
-     font-size: 8.8pt;
-     font-weight: 600;
-     color: #000000;
-     padding: 0 4px 1px 4px;
-     outline: none;
-     transition: background-color 0.15s;
- }
+/* Líneas editables tipo formulario oficial */
+.ficha-input {
+border: none;
+border-bottom: 1px solid #1e293b;
+background: transparent;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 8.8pt;
+font-weight: 600;
+color: #000000;
+padding: 0 4px 1px 4px;
+outline: none;
+transition: background-color 0.15s;
+}
 
- .ficha-input:focus {
-     background-color: #eff6ff;
-     border-bottom: 1.5px solid #2563eb;
- }
+.ficha-input:focus {
+background-color: #eff6ff;
+border-bottom: 1.5px solid #2563eb;
+}
 
- .ficha-input-center {
-     text-align: center;
- }
+.ficha-input-center {
+text-align: center;
+}
 
- /* Casillas de marca (Sí / No) */
- .ficha-check-box {
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     width: 24px;
-     height: 15px;
-     border-bottom: 1px solid #1e293b;
-     font-weight: bold;
-     font-size: 8.5pt;
-     cursor: pointer;
-     user-select: none;
-     margin: 0 2px;
-     vertical-align: bottom;
- }
+/* Casillas de marca (Sí / No) */
+.ficha-check-box {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 24px;
+height: 15px;
+border-bottom: 1px solid #1e293b;
+font-weight: bold;
+font-size: 8.5pt;
+cursor: pointer;
+user-select: none;
+margin: 0 2px;
+vertical-align: bottom;
+}
 
- .ficha-check-box:hover {
-     background-color: #e0f2fe;
- }
+.ficha-check-box:hover {
+background-color: #e0f2fe;
+}
 
- /* Tabla de Padres / Representantes */
- .ficha-table {
-     width: 100%;
-     border-collapse: collapse;
-     font-size: 8.2pt;
-     margin-top: 2px;
- }
+/* Tabla de Padres / Representantes */
+.ficha-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 8.2pt;
+margin-top: 2px;
+}
 
- .ficha-table th,
- .ficha-table td {
-     border: 1px solid #334155;
-     padding: 2.5px 5px;
-     vertical-align: middle;
- }
+.ficha-table th,
+.ficha-table td {
+border: 1px solid #334155;
+padding: 2.5px 5px;
+vertical-align: middle;
+}
 
- .ficha-table th {
-     background-color: #f1f5f9 !important;
-     font-weight: bold;
-     text-align: center;
-     font-size: 8pt;
-     -webkit-print-color-adjust: exact;
-     print-color-adjust: exact;
- }
+.ficha-table th {
+background-color: #f1f5f9 !important;
+font-weight: bold;
+text-align: center;
+font-size: 8pt;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
 
- .ficha-table td:first-child {
-     font-weight: bold;
-     width: 21%;
-     font-size: 7.8pt;
-     background-color: #f8fafc !important;
-     -webkit-print-color-adjust: exact;
-     print-color-adjust: exact;
- }
+.ficha-table td:first-child {
+font-weight: bold;
+width: 21%;
+font-size: 7.8pt;
+background-color: #f8fafc !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
 
- .table-input {
-     width: 100%;
-     border: none;
-     background: transparent;
-     font-family: Arial, Helvetica, sans-serif;
-     font-size: 8.2pt;
-     font-weight: 600;
-     color: #000;
-     outline: none;
-     padding: 0;
- }
+.table-input {
+width: 100%;
+border: none;
+background: transparent;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 8.2pt;
+font-weight: 600;
+color: #000;
+outline: none;
+padding: 0;
+}
 
- .table-input:focus {
-     background-color: #eff6ff;
- }
+.table-input:focus {
+background-color: #eff6ff;
+}
 
- /* Contenedor de impresión por lote oculto en pantalla */
- #batchPrintContainer {
-     display: none;
- }
+/* Contenedor de impresión por lote oculto en pantalla */
+#batchPrintContainer {
+display: none;
+}
 
- /* Estilos de Impresión (Carta 1 página exacta) */
- @page {
-     size: letter portrait;
-     margin: 0;
- }
+/* Estilos de Impresión (Carta exacta sin hojas en blanco) */
+@page {
+size: letter portrait;
+margin: 0;
+}
 
- @media print {
-     body {
-         background: #ffffff !important;
-         margin: 0 !important;
-         padding: 0 !important;
-     }
+@media print {
+html, body {
+background: #ffffff !important;
+margin: 0 !important;
+padding: 0 !important;
+height: auto !important;
+}
 
-     .no-print {
-         display: none !important;
-     }
+.no-print {
+display: none !important;
+}
 
-     #mainWorkspace {
-         padding: 0 !important;
-         margin: 0 !important;
-         display: block !important;
-     }
+#mainWorkspace,
+#singleSheetWrapper,
+#fichaPrimeraInfanciaWrapper {
+padding: 0 !important;
+margin: 0 !important;
+display: block !important;
+overflow: visible !important;
+box-shadow: none !important;
+background: #ffffff !important;
+}
 
-     .ficha-sheet {
-         box-shadow: none !important;
-         margin: 0 !important;
-         width: 215.9mm !important;
-         height: 279.4mm !important;
-         min-height: 279.4mm !important;
-         padding: 8mm 10mm !important;
-         page-break-after: always;
-         break-after: page;
-     }
+/* Evitar que space-y-6 agregue márgenes superiores al imprimir */
+#fichaPrimeraInfanciaWrapper > * + * {
+margin-top: 0 !important;
+}
 
-     .ficha-sheet:last-child {
-         page-break-after: auto;
-         break-after: auto;
-     }
+.ficha-sheet {
+box-shadow: none !important;
+margin: 0 !important;
+width: 215.9mm !important;
+height: 279mm !important;
+min-height: 279mm !important;
+max-height: 279mm !important;
+padding: 7.5mm 10mm !important;
+overflow: hidden !important;
+page-break-after: always;
+break-after: page;
+page-break-inside: avoid;
+break-inside: avoid;
+}
 
-     .ficha-input:focus,
-     .table-input:focus {
-         background-color: transparent !important;
-     }
+/* Ajuste fino para que las 4 páginas de Primera Infancia quepan exactas */
+.ficha-sheet.pi-page {
+padding: 6.5mm 9.5mm !important;
+line-height: 1.24 !important;
+}
 
-     body.printing-batch #singleSheetWrapper {
-         display: none !important;
-     }
+.ficha-sheet.pi-page .ficha-section-bar {
+margin-top: 4px !important;
+margin-bottom: 4px !important;
+padding: 2.5px 7px !important;
+}
 
-     body.printing-batch #batchPrintContainer {
-         display: block !important;
-     }
- }
+.ficha-sheet:last-child {
+page-break-after: auto;
+break-after: auto;
+}
 
- /* ========================================================
-       AJUSTES PARA CELULARES Y PANTALLAS PEQUEÑAS
-       ======================================================== */
- /* Ocultar aviso de deslizar por defecto en pantallas grandes */
- .mobile-swipe-hint {
-     display: none;
- }
+.ficha-input:focus,
+.table-input:focus {
+background-color: transparent !important;
+}
 
- /* Responsive wrapper en pantallas pequeñas */
- @media (max-width: 900px) {
-     .sheet-scroll-container {
-         overflow-x: auto;
-         padding: 12px;
-         background-color: #cbd5e1;
-         border-radius: 0 0 0.5rem 0.5rem;
-         -webkit-overflow-scrolling: touch;
-         box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-     }
+/* Si está activa la Ficha de Primera Infancia, ocultar la General al imprimir */
+#fichaFormSheet.hidden,
+#fichaPrimeraInfanciaWrapper.hidden {
+display: none !important;
+}
 
-     .mobile-swipe-hint {
-         display: block;
-     }
- }
+/* Modo impresión por lote activo */
+body.printing-batch #singleSheetWrapper {
+display: none !important;
+}
 
- /* Mejorar áreas táctiles específicamente para teléfonos (no afecta la impresión) */
- @media screen and (max-width: 768px) {
-     .ficha-check-box {
-         min-height: 24px;
-         min-width: 32px;
-         background-color: #f1f5f9;
-         border-radius: 4px;
-     }
+body.printing-batch #batchPrintContainer {
+display: block !important;
+}
+}
 
-     .ficha-input,
-     .table-input {
-         padding-top: 4px;
-         padding-bottom: 4px;
-         background-color: #f8fafc;
-     }
- }
+/* ========================================================
+AJUSTES PARA CELULARES Y PANTALLAS PEQUEÑAS
+======================================================== /
+/ Ocultar aviso de deslizar por defecto en pantallas grandes */
+.mobile-swipe-hint {
+display: none;
+}
+
+/* Responsive wrapper en pantallas pequeñas */
+@media (max-width: 900px) {
+.sheet-scroll-container {
+overflow-x: auto;
+padding: 12px;
+background-color: #cbd5e1;
+border-radius: 0 0 0.5rem 0.5rem;
+-webkit-overflow-scrolling: touch;
+box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-swipe-hint {
+display: block;
+}
+}
+
+/* Mejorar áreas táctiles específicamente para teléfonos (no afecta la impresión) */
+@media screen and (max-width: 768px) {
+.ficha-check-box {
+min-height: 24px;
+min-width: 32px;
+background-color: #f1f5f9;
+border-radius: 4px;
+}
+
+.ficha-input,
+.table-input {
+padding-top: 4px;
+padding-bottom: 4px;
+background-color: #f8fafc;
+}
+}
