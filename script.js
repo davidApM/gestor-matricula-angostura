@@ -1,94 +1,139 @@
 // =========================================================================
-// 1. DEFINICIÓN DE CAMPOS OFICIALES Y SINÓNIMOS PARA MAPEO INTELIGENTE
+// 0. CONFIGURACIÓN DE GOOGLE SHEETS Y SEGURIDAD CON PIN
 // =========================================================================
-const FIELD_DEFINITIONS = [
-    { key: 'nie', label: 'NIE', aliases: ['nie', 'codigo estudiante', 'id estudiante'] },
-    { key: 'grado', label: 'Grado a matricular', aliases: ['grado', 'grado al que se va a matricular', 'grado 2027', 'nivel', 'seccion'] },
-    { key: 'primer_apellido', label: 'Primer apellido', aliases: ['primer apellido', 'apellido 1', 'apellido1', 'apellidos'] },
-    { key: 'segundo_apellido', label: 'Segundo apellido', aliases: ['segundo apellido', 'apellido 2', 'apellido2'] },
-    { key: 'primer_nombre', label: 'Primer nombre', aliases: ['primer nombre', 'nombre 1', 'nombre1', 'nombres'] },
-    { key: 'segundo_nombre', label: 'Segundo nombre', aliases: ['segundo nombre', 'nombre 2', 'nombre2'] },
-    { key: 'estudiante_nuevo', label: 'Estudiante nuevo (SÍ/NO)', aliases: ['estudiante nuevo', 'nuevo', 'nuevo ingreso'] },
-    { key: 'repite_grado', label: 'Repite grado (SÍ/NO)', aliases: ['repite grado', 'repite', 'repitente'] },
-    { key: 'extranjero', label: 'Extranjero (SÍ/NO)', aliases: ['extranjero'] },
-    { key: 'distrito_nacimiento', label: 'Distrito de nacimiento', aliases: ['distrito de nacimiento', 'municipio de nacimiento', 'lugar nacimiento'] },
-    { key: 'fecha_nacimiento', label: 'Fecha de nacimiento', aliases: ['fecha de nacimiento', 'fecha nacimiento', 'nacimiento'] },
-    { key: 'genero', label: 'Género', aliases: ['genero', 'sexo'] },
-    { key: 'grupo_sanguineo', label: 'Grupo sanguíneo', aliases: ['grupo sanguineo', 'tipo sangre', 'sangre'] },
-    { key: 'direccion_estudiante', label: 'Dirección del estudiante', aliases: ['direccion del estudiante', 'direccion', 'domicilio', 'caserio', 'canton'] },
-    { key: 'sufre_enfermedad', label: '¿Sufre enfermedad? (SÍ/NO)', aliases: ['sufre alguna enfermedad', 'enfermedad', 'padece enfermedad'] },
-    { key: 'especifique_enfermedad', label: 'Especifique enfermedad', aliases: ['especifique enfermedad', 'detalle enfermedad', 'cual enfermedad'] },
-    { key: 'consume_medicamentos', label: 'Consume medicamentos (SÍ/NO)', aliases: ['consume medicamentos', 'medicamentos'] },
-    { key: 'frecuencia_medicamentos', label: 'Frecuencia y horario medicamentos', aliases: ['especifique frecuencia y horario', 'frecuencia medicamentos', 'horario medicamentos'] },
-    { key: 'diagnostico_medico', label: 'Diagnóstico médico impide ejercicio (SÍ/NO)', aliases: ['diagnostico medico', 'impide ejercitarse', 'desarrollo corporal'] },
-    { key: 'correo_clases', label: 'Correo @clases', aliases: ['correo @clases', 'correo clases', 'correo', 'email'] },
-    { key: 'vacunas_completas', label: 'Vacunas completas (SÍ/NO)', aliases: ['vacunas completas', 'vacunas'] },
-    { key: 'problemas_visuales', label: 'Problemas visuales (SÍ/NO)', aliases: ['problemas visuales', 'vista', 'lentes'] },
-    { key: 'presenta_discapacidad', label: 'Presenta discapacidad', aliases: ['presenta discapacidad', 'discapacidad'] },
-    // Padre
-    { key: 'padre_documento', label: 'Padre - Documento (DUI)', aliases: ['padre documento', 'dui padre', 'documento padre'] },
-    { key: 'padre_primer_apellido', label: 'Padre - Primer apellido', aliases: ['padre primer apellido', 'primer apellido padre'] },
-    { key: 'padre_segundo_apellido', label: 'Padre - Segundo apellido', aliases: ['padre segundo apellido', 'segundo apellido padre'] },
-    { key: 'padre_nombres', label: 'Padre - Nombres', aliases: ['padre nombres', 'nombres padre', 'nombre padre'] },
-    { key: 'padre_telefono', label: 'Padre - Teléfono', aliases: ['padre telefono', 'telefono padre', 'celular padre'] },
-    { key: 'padre_direccion', label: 'Padre - Dirección', aliases: ['padre direccion', 'direccion padre'] },
-    { key: 'padre_nivel_educativo', label: 'Padre - Nivel educativo', aliases: ['padre nivel educativo', 'nivel educativo padre', 'escolaridad padre'] },
-    // Madre
-    { key: 'madre_documento', label: 'Madre - Documento (DUI)', aliases: ['madre documento', 'dui madre', 'documento madre'] },
-    { key: 'madre_primer_apellido', label: 'Madre - Primer apellido', aliases: ['madre primer apellido', 'primer apellido madre'] },
-    { key: 'madre_segundo_apellido', label: 'Madre - Segundo apellido', aliases: ['madre segundo apellido', 'segundo apellido madre'] },
-    { key: 'madre_nombres', label: 'Madre - Nombres', aliases: ['madre nombres', 'nombres madre', 'nombre madre'] },
-    { key: 'madre_telefono', label: 'Madre - Teléfono', aliases: ['madre telefono', 'telefono madre', 'celular madre'] },
-    { key: 'madre_direccion', label: 'Madre - Dirección', aliases: ['madre direccion', 'direccion madre'] },
-    { key: 'madre_nivel_educativo', label: 'Madre - Nivel educativo', aliases: ['madre nivel educativo', 'nivel educativo madre', 'escolaridad madre'] },
-    // Representante
-    { key: 'rep_documento', label: 'Representante - Documento (DUI)', aliases: ['representante documento', 'rep documento', 'dui representante', 'dui encargado'] },
-    { key: 'rep_primer_apellido', label: 'Representante - Primer apellido', aliases: ['representante primer apellido', 'rep primer apellido'] },
-    { key: 'rep_segundo_apellido', label: 'Representante - Segundo apellido', aliases: ['representante segundo apellido', 'rep segundo apellido'] },
-    { key: 'rep_nombres', label: 'Representante - Nombres', aliases: ['representante nombres', 'rep nombres', 'nombre representante', 'encargado'] },
-    { key: 'rep_telefono', label: 'Representante - Teléfono', aliases: ['representante telefono', 'rep telefono', 'telefono representante', 'telefono encargado'] },
-    { key: 'rep_direccion', label: 'Representante - Dirección', aliases: ['representante direccion', 'rep direccion', 'direccion representante'] },
-    { key: 'rep_nivel_educativo', label: 'Representante - Nivel educativo', aliases: ['representante nivel educativo', 'rep nivel educativo'] },
-    { key: 'rep_parentesco', label: 'Parentesco del representante', aliases: ['parentesco', 'que parentesco tiene'] },
-    // Autorización y firmas
-    { key: 'autoriza_foto', label: 'Autoriza fotografía (SÍ/NO)', aliases: ['autoriza foto', 'fotografiado', 'autorizo foto'] },
-    { key: 'compromiso_nombre', label: 'Nombre en Compromiso (Yo ___)', aliases: ['compromiso nombre', 'nombre compromiso'] },
-    { key: 'docente_nombre', label: 'Nombre Docente Responsable', aliases: ['docente responsable', 'docente nombre', 'docente'] },
-    { key: 'encargado_firma_nombre', label: 'Nombre Firma Encargado', aliases: ['encargado firma', 'firma encargado', 'padre madre o encargado'] },
-    { key: 'datos_primera_infancia_json', label: 'Datos Extra Primera Infancia (JSON)', aliases: ['datos primera infancia'] }
-];
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
 
-let activeFormTemplate = 'general'; // 'general' o 'infancia'
-// =========================================================================
-// 4. INTERACCIÓN CON CASILLAS SÍ / NO DE LA FICHA OFICIAL Y CAMBIO DE FORMATO
-// =========================================================================
-function isPrimeraInfanciaGrade(gradeStr) {
-    const norm = normalizeText(gradeStr);
-    if (!norm) return false;
-    if (norm.includes('parvularia') || norm.includes('inicial')) return true;
-    if ((norm.includes('1') || norm.includes('primer')) && norm.includes('grado')) return true;
-    return false;
+let ACCESS_PIN = "";
+let studentsDB = [];
+let currentStudentIndex = -1;
+let rawImportedHeaders = [];
+let rawImportedRows = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+    setupAutoGenderListener();
+
+    // Verificar si ya ingresó el PIN en esta sesión
+    const savedPin = sessionStorage.getItem('matricula_access_pin');
+    if (savedPin) {
+        ACCESS_PIN = savedPin;
+        unlockSystemAndLoad();
+    } else {
+        setTimeout(() => document.getElementById('pinLoginInput')?.focus(), 100);
+    }
+});
+
+async function verifyPinAccess() {
+    const input = document.getElementById('pinLoginInput');
+    const errorMsg = document.getElementById('pinErrorMsg');
+    const pinValue = input.value.trim();
+
+    if (!pinValue) {
+        errorMsg.textContent = 'Por favor, ingresa el PIN.';
+        errorMsg.classList.remove('hidden');
+        return;
+    }
+
+    errorMsg.classList.add('hidden');
+    ACCESS_PIN = pinValue;
+
+    const ok = await loadFromGoogleSheets(true);
+    if (ok) {
+        sessionStorage.setItem('matricula_access_pin', ACCESS_PIN);
+        document.getElementById('pinLockOverlay')?.classList.add('hidden');
+    } else {
+        ACCESS_PIN = "";
+        errorMsg.textContent = 'PIN incorrecto o sin conexión a Google Sheets.';
+        errorMsg.classList.remove('hidden');
+        input.select();
+    }
 }
 
-function switchFormTemplate(templateType) {
-    activeFormTemplate = templateType;
-    const generalSheet = document.getElementById('fichaFormSheet');
-    const infanciaWrapper = document.getElementById('fichaPrimeraInfanciaWrapper');
-    const btnGen = document.getElementById('tabBtnGeneral');
-    const btnInf = document.getElementById('tabBtnInfancia');
+function unlockSystemAndLoad() {
+    document.getElementById('pinLockOverlay')?.classList.add('hidden');
+    loadFromGoogleSheets(false);
+}
 
-    if (!generalSheet || !infanciaWrapper) return;
+async function loadFromGoogleSheets(isLoginAttempt = false) {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('TU_URL_DE_IMPLEMENTACION')) {
+        showToast('⚠️ Falta configurar GOOGLE_SCRIPT_URL en script.js', 'warning');
+        return true;
+    }
 
-    if (templateType === 'infancia') {
-        generalSheet.classList.add('hidden');
-        infanciaWrapper.classList.remove('hidden');
-        if (btnInf) btnInf.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-emerald-900 shadow-xs cursor-pointer transition';
-        if (btnGen) btnGen.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
-    } else {
-        infanciaWrapper.classList.add('hidden');
-        generalSheet.classList.remove('hidden');
-        if (btnGen) btnGen.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition';
-        if (btnInf) btnInf.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?pin=${encodeURIComponent(ACCESS_PIN)}`);
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+            if (!isLoginAttempt) {
+                sessionStorage.removeItem('matricula_access_pin');
+                document.getElementById('pinLockOverlay')?.classList.remove('hidden');
+            }
+            return false;
+        }
+
+        const rows = result.data || [];
+        if (rows.length > 1) {
+            const headers = rows[0].map(h => normalizeText(h));
+            const keyMap = headers.map(h => {
+                const found = FIELD_DEFINITIONS.find(f =>
+                    normalizeText(f.label) === h || f.aliases.some(al => normalizeText(al) === h)
+                );
+                return found ? found.key : null;
+            });
+
+            studentsDB = rows.slice(1)
+                .filter(r => r.some(cell => String(cell).trim() !== ''))
+                .map(r => {
+                    const obj = {};
+                    FIELD_DEFINITIONS.forEach(f => obj[f.key] = '');
+                    r.forEach((cell, idx) => {
+                        if (keyMap[idx]) obj[keyMap[idx]] = String(cell).trim();
+                    });
+                    if (obj.grado) obj.grado = promoteGradeFor2027(obj.grado);
+                    if (!obj.genero && obj.primer_nombre) obj.genero = inferGenderFromName(obj.primer_nombre);
+                    if (!obj.correo_clases && obj.nie) obj.correo_clases = `${obj.nie}@clases.edu.sv`;
+                    return obj;
+                });
+        } else {
+            studentsDB = [];
+        }
+
+        updateGradeFilters();
+        renderStudentsList();
+        if (studentsDB.length > 0) {
+            selectStudent(0);
+        } else {
+            createNewStudent();
+        }
+        showToast(`Base sincronizada (${studentsDB.length} estudiantes).`, 'success');
+        return true;
+    } catch (err) {
+        console.error('Error cargando Google Sheets:', err);
+        if (!isLoginAttempt) showToast('Error al conectar con Google Sheets.', 'error');
+        return false;
+    }
+}
+
+async function syncToGoogleSheets() {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('TU_URL_DE_IMPLEMENTACION') || !ACCESS_PIN) return;
+
+    try {
+        const headers = FIELD_DEFINITIONS.map(f => f.label);
+        const rows = studentsDB.map(st => FIELD_DEFINITIONS.map(f => st[f.key] || ''));
+
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ pin: ACCESS_PIN, headers, rows })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            showToast('☁️ Guardado en Google Sheets.', 'success');
+        } else {
+            showToast('No se pudo sincronizar con Google Sheets.', 'error');
+        }
+    } catch (err) {
+        console.error('Error guardando en Google Sheets:', err);
+        showToast('Error de red al guardar en la nube.', 'error');
     }
 }
 
@@ -148,41 +193,41 @@ function normalizeYesNo(val) {
 }
 
 // =========================================================================
-// 5. LECTURA Y LLENADO DEL FORMULARIO DE LA FICHA
+// 1. DEFINICIÓN DE CAMPOS OFICIALES Y SINÓNIMOS PARA MAPEO INTELIGENTE
 // =========================================================================
-function populateSheetForm(sheetElement, studentData) {
-    const rawData = studentData || {};
-    let extraPI = {};
-    if (rawData.datos_primera_infancia_json) {
-        try { extraPI = JSON.parse(rawData.datos_primera_infancia_json); } catch (e) { }
+const FIELD_DEFINITIONS = [
+  const rawData = studentData || {};
+let extraPI = {};
+if (rawData.datos_primera_infancia_json) {
+    try { extraPI = JSON.parse(rawData.datos_primera_infancia_json); } catch (e) { }
+}
+const data = { ...extraPI, ...rawData };
+
+sheetElement.querySelectorAll('input[data-field]').forEach(input => {
+    const key = input.getAttribute('data-field');
+    if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+        input.value = String(data[key]);
+    } else if (!input.defaultValue) {
+        input.value = '';
     }
-    const data = { ...extraPI, ...rawData };
+});
 
-    sheetElement.querySelectorAll('input[data-field]').forEach(input => {
-        const key = input.getAttribute('data-field');
-        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
-            input.value = String(data[key]);
-        } else if (!input.defaultValue) {
-            input.value = '';
-        }
-    });
+sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
+    const key = box.getAttribute('data-field');
+    if (key.startsWith('pi_')) {
+        box.textContent = data[key] === 'X' ? 'X' : '';
+    } else {
+        box.textContent = normalizeYesNo(data[key]);
+    }
+});
 
-    sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
-        const key = box.getAttribute('data-field');
-        if (key.startsWith('pi_')) {
-            box.textContent = data[key] === 'X' ? 'X' : '';
-        } else {
-            box.textContent = normalizeYesNo(data[key]);
-        }
-    });
-
-    const allRadioGroups = new Set();
-    sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
-        allRadioGroups.add(box.getAttribute('data-group'));
-    });
-    allRadioGroups.forEach(group => {
-        setRadioGroupValue(sheetElement, group, data[group]);
-    });
+const allRadioGroups = new Set();
+sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
+    allRadioGroups.add(box.getAttribute('data-group'));
+});
+allRadioGroups.forEach(group => {
+    setRadioGroupValue(sheetElement, group, data[group]);
+});
 }
 
 function extractDataFromSheetForm(sheetElement) {
