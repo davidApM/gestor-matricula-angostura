@@ -193,41 +193,128 @@ function normalizeYesNo(val) {
 }
 
 // =========================================================================
-// 1. DEFINICIÓN DE CAMPOS OFICIALES Y SINÓNIMOS PARA MAPEO INTELIGENTE
+// 1. DEFINICIÓN DE CAMPOS OFICIALES Y CAMBIO ENTRE FICHAS
 // =========================================================================
+let activeFormTemplate = 'general';
+
 const FIELD_DEFINITIONS = [
-  const rawData = studentData || {};
-let extraPI = {};
-if (rawData.datos_primera_infancia_json) {
-    try { extraPI = JSON.parse(rawData.datos_primera_infancia_json); } catch (e) { }
+    { key: 'nie', label: 'NIE', aliases: ['nie estudiante', 'numero de identificacion'] },
+    { key: 'primer_nombre', label: 'Primer Nombre', aliases: ['nombre 1', 'nombres'] },
+    { key: 'segundo_nombre', label: 'Segundo Nombre', aliases: ['nombre 2'] },
+    { key: 'primer_apellido', label: 'Primer Apellido', aliases: ['apellido 1', 'apellidos'] },
+    { key: 'segundo_apellido', label: 'Segundo Apellido', aliases: ['apellido 2'] },
+    { key: 'grado', label: 'Grado a Matricular', aliases: ['grado', 'seccion'] },
+    { key: 'estudiante_nuevo', label: 'Estudiante Nuevo', aliases: ['nuevo'] },
+    { key: 'repite_grado', label: 'Repite Grado', aliases: ['repite'] },
+    { key: 'extranjero', label: 'Extranjero', aliases: [] },
+    { key: 'distrito_nacimiento', label: 'Distrito Nacimiento', aliases: ['lugar nacimiento'] },
+    { key: 'fecha_nacimiento', label: 'Fecha Nacimiento', aliases: ['fecha de nacimiento', 'fn'] },
+    { key: 'genero', label: 'Género', aliases: ['sexo'] },
+    { key: 'grupo_sanguineo', label: 'Grupo Sanguíneo', aliases: ['tipo sangre', 'sangre'] },
+    { key: 'direccion_estudiante', label: 'Dirección Estudiante', aliases: ['direccion'] },
+    { key: 'sufre_enfermedad', label: 'Sufre Enfermedad', aliases: ['enfermedad'] },
+    { key: 'especifique_enfermedad', label: 'Especifique Enfermedad', aliases: ['cual enfermedad'] },
+    { key: 'consume_medicamentos', label: 'Consume Medicamentos', aliases: ['medicamentos'] },
+    { key: 'frecuencia_medicamentos', label: 'Frecuencia Medicamentos', aliases: ['horario medicamentos'] },
+    { key: 'diagnostico_medico', label: 'Diagnóstico Médico', aliases: ['diagnostico'] },
+    { key: 'correo_clases', label: 'Correo @clases', aliases: ['correo', 'email'] },
+    { key: 'vacunas_completas', label: 'Vacunas Completas', aliases: ['vacunas'] },
+    { key: 'problemas_visuales', label: 'Problemas Visuales', aliases: ['lentes', 'vision'] },
+    { key: 'presenta_discapacidad', label: 'Presenta Discapacidad', aliases: ['discapacidad'] },
+    { key: 'padre_documento', label: 'DUI Padre', aliases: ['dui padre', 'documento padre'] },
+    { key: 'madre_documento', label: 'DUI Madre', aliases: ['dui madre', 'documento madre'] },
+    { key: 'rep_documento', label: 'DUI Representante', aliases: ['dui rep', 'dui encargado'] },
+    { key: 'padre_primer_apellido', label: '1er Apellido Padre', aliases: ['apellido padre'] },
+    { key: 'madre_primer_apellido', label: '1er Apellido Madre', aliases: ['apellido madre'] },
+    { key: 'rep_primer_apellido', label: '1er Apellido Representante', aliases: ['apellido rep'] },
+    { key: 'padre_segundo_apellido', label: '2do Apellido Padre', aliases: [] },
+    { key: 'madre_segundo_apellido', label: '2do Apellido Madre', aliases: [] },
+    { key: 'rep_segundo_apellido', label: '2do Apellido Representante', aliases: [] },
+    { key: 'padre_nombres', label: 'Nombres Padre', aliases: ['nombre padre'] },
+    { key: 'madre_nombres', label: 'Nombres Madre', aliases: ['nombre madre'] },
+    { key: 'rep_nombres', label: 'Nombres Representante', aliases: ['nombre rep', 'nombre encargado'] },
+    { key: 'padre_telefono', label: 'Teléfono Padre', aliases: ['cel padre'] },
+    { key: 'madre_telefono', label: 'Teléfono Madre', aliases: ['cel madre'] },
+    { key: 'rep_telefono', label: 'Teléfono Representante', aliases: ['cel rep'] },
+    { key: 'padre_direccion', label: 'Dirección Padre', aliases: ['dir padre'] },
+    { key: 'madre_direccion', label: 'Dirección Madre', aliases: ['dir madre'] },
+    { key: 'rep_direccion', label: 'Dirección Representante', aliases: ['dir rep'] },
+    { key: 'padre_nivel_educativo', label: 'Nivel Educ. Padre', aliases: ['estudios padre'] },
+    { key: 'madre_nivel_educativo', label: 'Nivel Educ. Madre', aliases: ['estudios madre'] },
+    { key: 'rep_nivel_educativo', label: 'Nivel Educ. Representante', aliases: ['estudios rep'] },
+    { key: 'rep_parentesco', label: 'Parentesco Representante', aliases: ['parentesco'] },
+    { key: 'autoriza_foto', label: 'Autoriza Fotografía', aliases: ['foto'] },
+    { key: 'compromiso_nombre', label: 'Nombre en Compromiso', aliases: [] },
+    { key: 'docente_nombre', label: 'Nombre Docente', aliases: ['docente'] },
+    { key: 'encargado_firma_nombre', label: 'Nombre Firma Encargado', aliases: [] },
+    { key: 'datos_primera_infancia_json', label: 'Datos Primera Infancia', aliases: [] }
+];
+
+const SAMPLE_STUDENTS = [];
+
+function isPrimeraInfanciaGrade(gradeStr) {
+    const norm = normalizeText(gradeStr);
+    if (!norm) return false;
+    if (norm.includes('parvularia') || norm.includes('parv') || norm.includes('inicial')) return true;
+    if ((norm.includes('1') || norm.includes('primer')) && norm.includes('grado')) return true;
+    return false;
 }
-const data = { ...extraPI, ...rawData };
 
-sheetElement.querySelectorAll('input[data-field]').forEach(input => {
-    const key = input.getAttribute('data-field');
-    if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
-        input.value = String(data[key]);
-    } else if (!input.defaultValue) {
-        input.value = '';
-    }
-});
+function switchFormTemplate(template) {
+    activeFormTemplate = template;
+    const generalSheet = document.getElementById('fichaFormSheet');
+    const infanciaWrapper = document.getElementById('fichaPrimeraInfanciaWrapper');
+    const tabGeneral = document.getElementById('tabBtnGeneral');
+    const tabInfancia = document.getElementById('tabBtnInfancia');
 
-sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
-    const key = box.getAttribute('data-field');
-    if (key.startsWith('pi_')) {
-        box.textContent = data[key] === 'X' ? 'X' : '';
+    if (!generalSheet || !infanciaWrapper) return;
+
+    if (template === 'infancia') {
+        generalSheet.classList.add('hidden');
+        infanciaWrapper.classList.remove('hidden');
+        if (tabInfancia) tabInfancia.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition';
+        if (tabGeneral) tabGeneral.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
     } else {
-        box.textContent = normalizeYesNo(data[key]);
+        infanciaWrapper.classList.add('hidden');
+        generalSheet.classList.remove('hidden');
+        if (tabGeneral) tabGeneral.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition';
+        if (tabInfancia) tabInfancia.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
     }
-});
+}
 
-const allRadioGroups = new Set();
-sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
-    allRadioGroups.add(box.getAttribute('data-group'));
-});
-allRadioGroups.forEach(group => {
-    setRadioGroupValue(sheetElement, group, data[group]);
-});
+function populateSheetForm(sheetElement, studentData) {
+    const rawData = studentData || {};
+    let extraPI = {};
+    if (rawData.datos_primera_infancia_json) {
+        try { extraPI = JSON.parse(rawData.datos_primera_infancia_json); } catch (e) { }
+    }
+    const data = { ...extraPI, ...rawData };
+
+    sheetElement.querySelectorAll('input[data-field]').forEach(input => {
+        const key = input.getAttribute('data-field');
+        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+            input.value = String(data[key]);
+        } else if (!input.defaultValue) {
+            input.value = '';
+        }
+    });
+
+    sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
+        const key = box.getAttribute('data-field');
+        if (key.startsWith('pi_')) {
+            box.textContent = data[key] === 'X' ? 'X' : '';
+        } else {
+            box.textContent = normalizeYesNo(data[key]);
+        }
+    });
+
+    const allRadioGroups = new Set();
+    sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
+        allRadioGroups.add(box.getAttribute('data-group'));
+    });
+    allRadioGroups.forEach(group => {
+        setRadioGroupValue(sheetElement, group, data[group]);
+    });
 }
 
 function extractDataFromSheetForm(sheetElement) {
