@@ -3,6 +3,7 @@
 // =========================================================================
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
 
+
 let ACCESS_PIN = "";
 let studentsDB = [];
 let currentStudentIndex = -1;
@@ -52,6 +53,37 @@ async function verifyPinAccess() {
 function unlockSystemAndLoad() {
     document.getElementById('pinLockOverlay')?.classList.add('hidden');
     loadFromGoogleSheets(false);
+}
+
+function logoutSystem() {
+    ACCESS_PIN = "";
+    sessionStorage.removeItem('matricula_access_pin');
+    studentsDB = [];
+    currentStudentIndex = -1;
+
+    // Limpiar formularios en pantalla por privacidad
+    populateSheetForm(document.getElementById('fichaFormSheet'), {});
+    populateSheetForm(document.getElementById('fichaPrimeraInfanciaWrapper'), {});
+    renderStudentsList();
+
+    // Ocultar herramientas Admin Excel si estaban abiertas
+    const adminGroup = document.getElementById('adminExcelToolsGroup');
+    const adminBtn = document.getElementById('unlockAdminExcelBtn');
+    if (adminGroup && !adminGroup.classList.contains('hidden')) {
+        adminGroup.classList.add('hidden');
+        adminGroup.classList.remove('flex');
+        if (adminBtn) adminBtn.innerHTML = '<i class="fa-solid fa-key text-amber-400"></i><span>Admin Excel</span>';
+    }
+
+    // Mostrar nuevamente la pantalla de bloqueo con PIN
+    const pinOverlay = document.getElementById('pinLockOverlay');
+    const pinInput = document.getElementById('pinLoginInput');
+    if (pinOverlay) pinOverlay.classList.remove('hidden');
+    if (pinInput) {
+        pinInput.value = '';
+        setTimeout(() => pinInput.focus(), 100);
+    }
+    showToast('Sesión cerrada y sistema bloqueado.', 'info');
 }
 
 async function loadFromGoogleSheets(isLoginAttempt = false) {

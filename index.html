@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,14 +13,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- Google Fonts: Inter para UI y Arimo/Arial para el documento oficial -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  
+
   <!-- Enlace a tu archivo de estilos externo -->
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="min-h-screen flex flex-col">
 
   <!-- PANTALLA DE BLOQUEO CON PIN -->
-  <div id="pinLockOverlay" class="no-print fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
+  <div id="pinLockOverlay"
+    class="no-print fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
       <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-2xl">
         <i class="fa-solid fa-lock"></i>
@@ -29,16 +32,12 @@
         <p class="text-xs text-slate-500 mt-1">C.E. Caserío La Angostura · Código 10844</p>
       </div>
       <div class="space-y-3 pt-1">
-        <input
-          type="password"
-          id="pinLoginInput"
-          maxlength="10"
-          placeholder="Ingresa el PIN de acceso"
+        <input type="password" id="pinLoginInput" maxlength="10" placeholder="Ingresa el PIN de acceso"
           onkeydown="if(event.key === 'Enter') verifyPinAccess()"
-          class="w-full text-center tracking-widest font-bold text-lg border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-        />
+          class="w-full text-center tracking-widest font-bold text-lg border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600" />
         <p id="pinErrorMsg" class="hidden text-xs font-semibold text-red-600">PIN incorrecto. Intenta nuevamente.</p>
-        <button onclick="verifyPinAccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl transition shadow cursor-pointer">
+        <button onclick="verifyPinAccess()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-2.5 px-4 rounded-xl transition shadow cursor-pointer">
           <i class="fa-solid fa-unlock-keyhole mr-1.5"></i> Desbloquear Sistema
         </button>
       </div>
@@ -64,7 +63,9 @@
       <!-- Acciones principales de Excel e Impresión -->
       <div class="flex flex-wrap items-center gap-2">
         <!-- Botón Candado para desbloquear herramientas de Excel (Admin) -->
-        <button id="unlockAdminExcelBtn" onclick="toggleAdminExcelTools()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-2.5 py-2 rounded-lg flex items-center gap-1.5 transition cursor-pointer border border-slate-700" title="Desbloquear opciones de Excel (Solo Administración)">
+        <button id="unlockAdminExcelBtn" onclick="toggleAdminExcelTools()"
+          class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-2.5 py-2 rounded-lg flex items-center gap-1.5 transition cursor-pointer border border-slate-700"
+          title="Desbloquear opciones de Excel (Solo Administración)">
           <i class="fa-solid fa-key text-amber-400"></i>
           <span>Admin Excel</span>
         </button>
@@ -72,35 +73,50 @@
         <!-- Grupo de botones protegidos (Ocultos por defecto) -->
         <div id="adminExcelToolsGroup" class="hidden flex-wrap items-center gap-2">
           <!-- Descargar Plantilla -->
-          <button onclick="downloadTemplateExcel()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer" title="Descargar Excel de ejemplo con la estructura exacta">
+          <button onclick="downloadTemplateExcel()"
+            class="bg-slate-700 hover:bg-slate-600 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer"
+            title="Descargar Excel de ejemplo con la estructura exacta">
             <i class="fa-solid fa-file-excel text-emerald-400"></i>
             <span>Plantilla Ejemplo</span>
           </button>
 
           <!-- Cargar Excel / CSV -->
-          <label class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
+          <label
+            class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
             <i class="fa-solid fa-upload"></i>
             <span>Cargar BD Excel</span>
-            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)" />
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden"
+              onchange="handleExcelUpload(event)" />
           </label>
 
           <!-- Exportar BD Actualizada -->
-          <button onclick="exportUpdatedExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
+          <button onclick="exportUpdatedExcel()"
+            class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
             <i class="fa-solid fa-download"></i>
             <span>Exportar BD (.xlsx)</span>
           </button>
         </div>
 
         <!-- Imprimir Ficha Actual -->
-        <button onclick="printSingleSheet()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
+        <button onclick="printSingleSheet()"
+          class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
           <i class="fa-solid fa-print"></i>
           <span>Imprimir Ficha</span>
         </button>
 
         <!-- Imprimir Lote -->
-        <button onclick="openBatchModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
+        <button onclick="openBatchModal()"
+          class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer shadow">
           <i class="fa-solid fa-layer-group"></i>
           <span>Imprimir Lote</span>
+        </button>
+
+        <!-- Cerrar Sesión / Bloquear Sistema -->
+        <button onclick="logoutSystem()"
+          class="bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition cursor-pointer shadow"
+          title="Cerrar sesión y bloquear el sistema">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Salir</span>
         </button>
       </div>
     </div>
@@ -181,22 +197,25 @@
         <p class="text-[11px] text-indigo-800 mb-3 leading-tight">
           Asigna tu nombre y datos repetitivos a todos los alumnos de tu grado de una sola vez.
         </p>
-        
+
         <div class="space-y-2.5 text-xs">
           <div>
             <label class="font-semibold text-slate-700 block mb-1">1. Elige o escribe el Grado:</label>
-            <input type="text" id="bulkGradeSelect" list="bulkGradeDatalist" placeholder="Ej. 3° Grado &quot;A&quot;" class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500" />
+            <input type="text" id="bulkGradeSelect" list="bulkGradeDatalist" placeholder="Ej. 3° Grado &quot;A&quot;"
+              class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500" />
             <datalist id="bulkGradeDatalist"></datalist>
           </div>
 
           <div>
             <label class="font-semibold text-slate-700 block mb-1">2. Nombre del Docente Responsable:</label>
-            <input type="text" id="bulkTeacherName" placeholder="Ej. Prof. Juan Antonio Pérez" class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500" />
+            <input type="text" id="bulkTeacherName" placeholder="Ej. Prof. Juan Antonio Pérez"
+              class="w-full border border-indigo-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 outline-none focus:border-indigo-500" />
           </div>
 
           <div class="pt-1">
             <label class="font-semibold text-slate-700 block mb-1">3. Valores por defecto (Opcional):</label>
-            <div class="grid grid-cols-2 gap-1.5 text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-indigo-100">
+            <div
+              class="grid grid-cols-2 gap-1.5 text-[11px] text-slate-700 bg-white p-2 rounded-lg border border-indigo-100">
               <label class="flex items-center gap-1.5 cursor-pointer">
                 <input type="checkbox" id="bulkDefaultVacunas" class="rounded text-indigo-600" /> Vacunas: SÍ
               </label>
@@ -212,7 +231,8 @@
             </div>
           </div>
 
-          <button onclick="applyBulkTeacherData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer mt-1">
+          <button onclick="applyBulkTeacherData()"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer mt-1">
             <i class="fa-solid fa-bolt"></i> Aplicar a todo este Grado
           </button>
         </div>
@@ -220,11 +240,13 @@
 
       <!-- Guía rápida -->
       <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900 space-y-1.5">
-        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-blue-600"></i> Consejos rápidos:</p>
+        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-blue-600"></i> Consejos
+          rápidos:</p>
         <ul class="list-disc pl-4 space-y-1 text-blue-800">
           <li>Haz clic directamente sobre cualquier línea de la ficha derecha para editar datos.</li>
           <li>Haz clic en las casillas <strong>Sí / No</strong> de la ficha para marcar una <strong>X</strong>.</li>
-          <li>Al terminar de atender matrículas, presiona <strong>Exportar BD (.xlsx)</strong> para respaldar tu Excel actualizado.</li>
+          <li>Al terminar de atender matrículas, presiona <strong>Exportar BD (.xlsx)</strong> para respaldar tu Excel
+            actualizado.</li>
         </ul>
       </div>
     </aside>
@@ -233,18 +255,22 @@
     <main class="lg:col-span-8">
       <div class="no-print mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
         <div class="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-lg">
-          <button type="button" id="tabBtnGeneral" onclick="switchFormTemplate('general')" class="px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition">
+          <button type="button" id="tabBtnGeneral" onclick="switchFormTemplate('general')"
+            class="px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition">
             <i class="fa-regular fa-file-lines mr-1 text-blue-600"></i> Ficha Básica y Media (2° a Bach.)
           </button>
-          <button type="button" id="tabBtnInfancia" onclick="switchFormTemplate('infancia')" class="px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition">
+          <button type="button" id="tabBtnInfancia" onclick="switchFormTemplate('infancia')"
+            class="px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition">
             <i class="fa-solid fa-child-reaching mr-1 text-emerald-600"></i> Primera Infancia (Parv. 4 a 1° Grado)
           </button>
         </div>
-        <span id="editingStatusBadge" class="bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full">Modo: Nuevo Registro</span>
+        <span id="editingStatusBadge" class="bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full">Modo:
+          Nuevo Registro</span>
       </div>
 
       <!-- Hint para teléfonos móviles -->
-      <div class="no-print mobile-swipe-hint text-center text-xs font-bold text-blue-700 bg-blue-100 p-2.5 rounded-t-lg animate-pulse border-b border-blue-200">
+      <div
+        class="no-print mobile-swipe-hint text-center text-xs font-bold text-blue-700 bg-blue-100 p-2.5 rounded-t-lg animate-pulse border-b border-blue-200">
         <i class="fa-solid fa-arrows-left-right mr-1"></i> Desliza la hoja a los lados para ver y llenar todo
       </div>
 
@@ -263,10 +289,14 @@
 
             <!-- Textos Centrales -->
             <div class="text-center flex-1">
-              <div class="text-[13pt] font-extrabold tracking-wide text-black leading-tight">FICHA DE MATRÍCULA 2027</div>
-              <div class="text-[7.5pt] font-bold text-black mt-0.5">MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA · REPÚBLICA DE EL SALVADOR</div>
-              <div class="text-[7.5pt] font-bold text-black">COMPLEJO EDUCATIVO CASERÍO LA ANGOSTURA · CÓDIGO 10844</div>
-              <div class="text-[7.2pt] font-bold text-black">CANTÓN SANTA BÁRBARA · DISTRITO EL PARAÍSO · CHALATENANGO CENTRO</div>
+              <div class="text-[13pt] font-extrabold tracking-wide text-black leading-tight">FICHA DE MATRÍCULA 2027
+              </div>
+              <div class="text-[7.5pt] font-bold text-black mt-0.5">MINISTERIO DE EDUCACIÓN, CIENCIA Y TECNOLOGÍA ·
+                REPÚBLICA DE EL SALVADOR</div>
+              <div class="text-[7.5pt] font-bold text-black">COMPLEJO EDUCATIVO CASERÍO LA ANGOSTURA · CÓDIGO 10844
+              </div>
+              <div class="text-[7.2pt] font-bold text-black">CANTÓN SANTA BÁRBARA · DISTRITO EL PARAÍSO · CHALATENANGO
+                CENTRO</div>
             </div>
 
             <!-- Logo Derecho (Centro Educativo) -->
@@ -327,11 +357,16 @@
               </div>
               <div class="flex items-baseline w-[34%] min-w-0 relative">
                 <span class="whitespace-nowrap">Fecha de nacimiento:</span>
-                <input type="text" id="fechaNacimientoText" data-field="fecha_nacimiento" placeholder="DD/MM/AAAA" maxlength="10" oninput="formatBirthDateInput(this)" class="ficha-input flex-1 ml-1 ficha-input-center min-w-0" />
-                <button type="button" onclick="openBirthDatePicker()" class="no-print ml-1 flex-shrink-0 text-blue-600 hover:text-blue-800 cursor-pointer" title="Elegir en calendario">
+                <input type="text" id="fechaNacimientoText" data-field="fecha_nacimiento" placeholder="DD/MM/AAAA"
+                  maxlength="10" oninput="formatBirthDateInput(this)"
+                  class="ficha-input flex-1 ml-1 ficha-input-center min-w-0" />
+                <button type="button" onclick="openBirthDatePicker()"
+                  class="no-print ml-1 flex-shrink-0 text-blue-600 hover:text-blue-800 cursor-pointer"
+                  title="Elegir en calendario">
                   <i class="fa-regular fa-calendar-days text-xs"></i>
                 </button>
-                <input type="date" id="fechaNacimientoPicker" onchange="syncBirthDateFromPicker(this)" class="no-print sr-only" />
+                <input type="date" id="fechaNacimientoPicker" onchange="syncBirthDateFromPicker(this)"
+                  class="no-print sr-only" />
               </div>
             </div>
 
@@ -343,11 +378,13 @@
               </div>
               <div class="flex items-baseline w-[23%] min-w-0">
                 <span class="whitespace-nowrap">Grupo sanguíneo:</span>
-                <input type="text" data-field="grupo_sanguineo" class="ficha-input flex-1 ml-1 ficha-input-center uppercase min-w-0" />
+                <input type="text" data-field="grupo_sanguineo"
+                  class="ficha-input flex-1 ml-1 ficha-input-center uppercase min-w-0" />
               </div>
               <div class="flex items-baseline w-[22%] min-w-0">
                 <span class="whitespace-nowrap">NIE:</span>
-                <input type="text" data-field="nie" class="ficha-input flex-1 ml-1 ficha-input-center font-bold min-w-0" />
+                <input type="text" data-field="nie"
+                  class="ficha-input flex-1 ml-1 ficha-input-center font-bold min-w-0" />
               </div>
               <div class="flex items-baseline flex-1 min-w-0">
                 <span class="whitespace-nowrap">Dirección del estudiante:</span>
@@ -372,9 +409,11 @@
               <div class="flex items-baseline">
                 <span>Consume medicamentos</span>
                 <span class="ml-2">Sí</span>
-                <span class="ficha-check-box" data-group="consume_medicamentos" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="consume_medicamentos" data-val="SÍ"
+                  onclick="selectRadioBox(this)"></span>
                 <span class="ml-1">No</span>
-                <span class="ficha-check-box" data-group="consume_medicamentos" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="consume_medicamentos" data-val="NO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
               <div class="flex items-baseline flex-1 ml-2">
                 <span class="whitespace-nowrap">Especifique frecuencia y horario:</span>
@@ -387,9 +426,11 @@
               <div class="flex items-baseline">
                 <span>¿Tiene diagnóstico médico que le impida ejercitarse en Desarrollo Corporal?</span>
                 <span class="ml-2">Sí</span>
-                <span class="ficha-check-box" data-group="diagnostico_medico" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="diagnostico_medico" data-val="SÍ"
+                  onclick="selectRadioBox(this)"></span>
                 <span class="ml-1">No</span>
-                <span class="ficha-check-box" data-group="diagnostico_medico" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="diagnostico_medico" data-val="NO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
               <span class="text-[8pt] italic">Anexe constancia médica</span>
             </div>
@@ -403,9 +444,11 @@
               <div class="flex items-baseline">
                 <span>Vacunas completas:</span>
                 <span class="ml-2">Sí</span>
-                <span class="ficha-check-box" data-group="vacunas_completas" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="vacunas_completas" data-val="SÍ"
+                  onclick="selectRadioBox(this)"></span>
                 <span class="ml-1">No</span>
-                <span class="ficha-check-box" data-group="vacunas_completas" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="vacunas_completas" data-val="NO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
             </div>
 
@@ -414,9 +457,11 @@
               <div class="flex items-baseline">
                 <span>Problemas visuales:</span>
                 <span class="ml-2">Sí</span>
-                <span class="ficha-check-box" data-group="problemas_visuales" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="problemas_visuales" data-val="SÍ"
+                  onclick="selectRadioBox(this)"></span>
                 <span class="ml-1">No</span>
-                <span class="ficha-check-box" data-group="problemas_visuales" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span class="ficha-check-box" data-group="problemas_visuales" data-val="NO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
               <div class="flex items-baseline flex-1 ml-2">
                 <span class="whitespace-nowrap">Presenta discapacidad:</span>
@@ -493,18 +538,26 @@
 
           <!-- AUTORIZACIÓN DE FOTOGRAFÍA -->
           <div class="mt-2.5 text-[8.4pt] flex items-baseline flex-wrap">
-            <span>Autorizo para que mi hijo/a sea fotografiado en cualquier actividad institucional dentro o fuera del Centro Educativo.</span>
+            <span>Autorizo para que mi hijo/a sea fotografiado en cualquier actividad institucional dentro o fuera del
+              Centro Educativo.</span>
             <span class="ml-2 font-semibold">SÍ</span>
-            <span class="ficha-check-box" data-group="autoriza_foto" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+            <span class="ficha-check-box" data-group="autoriza_foto" data-val="SÍ"
+              onclick="selectRadioBox(this)"></span>
             <span class="ml-1 font-semibold">NO</span>
-            <span class="ficha-check-box" data-group="autoriza_foto" data-val="NO" onclick="selectRadioBox(this)"></span>
+            <span class="ficha-check-box" data-group="autoriza_foto" data-val="NO"
+              onclick="selectRadioBox(this)"></span>
           </div>
 
           <!-- SECCIÓN COMPROMISO -->
           <div class="mt-2.5">
             <div class="font-bold text-[9.5pt] uppercase mb-1">COMPROMISO</div>
             <p class="text-[8.3pt] text-justify leading-[1.45]">
-              Yo <input type="text" data-field="compromiso_nombre" class="ficha-input w-[265px] ficha-input-center uppercase" /> me comprometo a cumplir con las normativas del Centro Educativo y declaro que he recibido y tomado conocimiento del Manual de Convivencia Escolar y Reglamento Interno, que me comprometo a respetar, cumplir y hacer cumplir, incluidas las medidas disciplinarias y los deméritos que corresponda aplicar ante su incumplimiento. También me comprometo a participar activamente en el proceso educativo de mis hijos, según el artículo 55 de la Ley Crecer Juntos.
+              Yo <input type="text" data-field="compromiso_nombre"
+                class="ficha-input w-[265px] ficha-input-center uppercase" /> me comprometo a cumplir con las normativas
+              del Centro Educativo y declaro que he recibido y tomado conocimiento del Manual de Convivencia Escolar y
+              Reglamento Interno, que me comprometo a respetar, cumplir y hacer cumplir, incluidas las medidas
+              disciplinarias y los deméritos que corresponda aplicar ante su incumplimiento. También me comprometo a
+              participar activamente en el proceso educativo de mis hijos, según el artículo 55 de la Ley Crecer Juntos.
             </p>
           </div>
 
@@ -545,7 +598,7 @@
                   <span class="mr-1">F.</span>
                   <div class="border-b border-black flex-1 h-4"></div>
                 </div>
-                <div class="text-center font-bold mt-1 text-[8.2pt] uppercase">Lic. Julio César Orellana Rivas</div>
+                <div class="text-center font-bold mt-1 text-[8.2pt] uppercase">NOMBRE DEL DIRECTOR AQUÍ</div>
                 <div class="text-center text-[8pt]">Director del Centro Educativo</div>
               </div>
             </div>
@@ -558,7 +611,7 @@
         <!-- (PARVULARIA 4, PARVULARIA 5, PARVULARIA 6 Y PRIMER GRADO)       -->
         <!-- =============================================================== -->
         <div id="fichaPrimeraInfanciaWrapper" class="hidden space-y-6">
-          
+
           <!-- PÁGINA 1: PRIMERA INFANCIA -->
           <div class="ficha-sheet pi-page text-[8.2pt] leading-[1.3]">
             <!-- Encabezado Primera Infancia -->
@@ -567,7 +620,8 @@
                 <img src="logo-izquierdo.png" alt="Logo MINEDUCYT" class="h-11 w-auto object-contain" />
               </div>
               <div class="text-center flex-1">
-                <div class="text-[7.5pt] font-bold uppercase text-slate-700">DIRECCIÓN DE EDUCACIÓN DE PRIMERA INFANCIA</div>
+                <div class="text-[7.5pt] font-bold uppercase text-slate-700">DIRECCIÓN DE EDUCACIÓN DE PRIMERA INFANCIA
+                </div>
                 <div class="text-[11.5pt] font-extrabold text-black tracking-wide">FICHA DE MATRÍCULA Y ENTREVISTA</div>
                 <div class="text-[7.2pt] font-bold text-slate-800">PROGRAMA CRECER JUNTOS · MINEDUCYT EL SALVADOR</div>
               </div>
@@ -577,7 +631,9 @@
             </div>
 
             <p class="text-[7.2pt] text-justify bg-slate-100 p-1.5 rounded border border-slate-300 mb-2">
-              <strong>Indicación:</strong> La Ficha de matrícula y entrevista debe ser guiada y registrada por la modalidad de atención. La madre, padre o responsable presentarán su DUI y la cartilla de salud para documentar la información relativa a vacunación y estado nutricional.
+              <strong>Indicación:</strong> La Ficha de matrícula y entrevista debe ser guiada y registrada por la
+              modalidad de atención. La madre, padre o responsable presentarán su DUI y la cartilla de salud para
+              documentar la información relativa a vacunación y estado nutricional.
             </p>
 
             <!-- 1. DATOS GENERALES DEL CENTRO EDUCATIVO -->
@@ -586,11 +642,13 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline w-[35%]">
                   <span class="whitespace-nowrap">Código Infraestructura:</span>
-                  <input type="text" data-field="pi_codigo_infra" value="10844" class="ficha-input flex-1 ml-1 font-bold" />
+                  <input type="text" data-field="pi_codigo_infra" value="10844"
+                    class="ficha-input flex-1 ml-1 font-bold" />
                 </div>
                 <div class="flex items-baseline flex-1">
                   <span class="whitespace-nowrap">Centro Educativo:</span>
-                  <input type="text" data-field="pi_centro_educativo" value="C.E. CASERÍO LA ANGOSTURA" class="ficha-input flex-1 ml-1 font-bold" />
+                  <input type="text" data-field="pi_centro_educativo" value="C.E. CASERÍO LA ANGOSTURA"
+                    class="ficha-input flex-1 ml-1 font-bold" />
                 </div>
               </div>
               <div class="flex items-baseline gap-2">
@@ -600,7 +658,8 @@
                 </div>
                 <div class="flex items-baseline flex-1">
                   <span class="whitespace-nowrap">Municipio / Distrito:</span>
-                  <input type="text" data-field="pi_muni_ce" value="CHALATENANGO CENTRO / EL PARAÍSO" class="ficha-input flex-1 ml-1" />
+                  <input type="text" data-field="pi_muni_ce" value="CHALATENANGO CENTRO / EL PARAÍSO"
+                    class="ficha-input flex-1 ml-1" />
                 </div>
               </div>
               <div class="flex items-baseline gap-2">
@@ -616,7 +675,8 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline w-[55%]">
                   <span class="whitespace-nowrap">Lugar de atención:</span>
-                  <input type="text" data-field="pi_lugar_atencion" value="Cantón Santa Bárbara" class="ficha-input flex-1 ml-1" />
+                  <input type="text" data-field="pi_lugar_atencion" value="Cantón Santa Bárbara"
+                    class="ficha-input flex-1 ml-1" />
                 </div>
                 <div class="flex items-baseline flex-1">
                   <span class="whitespace-nowrap">Municipio:</span>
@@ -655,14 +715,16 @@
                 </div>
                 <div class="flex items-baseline w-[22%]">
                   <span class="whitespace-nowrap">Sexo:</span>
-                  <input type="text" data-field="genero" placeholder="F / M" class="ficha-input flex-1 ml-1 ficha-input-center uppercase" />
+                  <input type="text" data-field="genero" placeholder="F / M"
+                    class="ficha-input flex-1 ml-1 ficha-input-center uppercase" />
                 </div>
               </div>
 
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline w-[38%]">
                   <span class="whitespace-nowrap">Fecha nac. (dd/mm/aaaa):</span>
-                  <input type="text" data-field="fecha_nacimiento" placeholder="DD/MM/AAAA" maxlength="10" oninput="formatBirthDateInput(this)" class="ficha-input flex-1 ml-1 ficha-input-center" />
+                  <input type="text" data-field="fecha_nacimiento" placeholder="DD/MM/AAAA" maxlength="10"
+                    oninput="formatBirthDateInput(this)" class="ficha-input flex-1 ml-1 ficha-input-center" />
                 </div>
                 <div class="flex items-baseline w-[18%]">
                   <span class="whitespace-nowrap">Edad:</span>
@@ -677,9 +739,11 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline">
                   <span>Retornado: Sí</span>
-                  <span class="ficha-check-box" data-group="pi_retornado" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_retornado" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span class="ml-1">No</span>
-                  <span class="ficha-check-box" data-group="pi_retornado" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_retornado" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
                 <div class="flex items-baseline flex-1 ml-2">
                   <span class="whitespace-nowrap">Distancia al centro educativo (km):</span>
@@ -707,9 +771,12 @@
 
               <div class="flex flex-wrap items-baseline gap-2">
                 <span>Último grado cursado:</span>
-                <span>Inicial</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="INICIAL" onclick="selectRadioBox(this)"></span>
-                <span>Parvularia</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="PARVULARIA" onclick="selectRadioBox(this)"></span>
-                <span>Ninguno</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="NINGUNO" onclick="selectRadioBox(this)"></span>
+                <span>Inicial</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="INICIAL"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Parvularia</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="PARVULARIA"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Ninguno</span><span class="ficha-check-box" data-group="pi_ultimo_grado" data-val="NINGUNO"
+                  onclick="selectRadioBox(this)"></span>
                 <div class="flex items-baseline flex-1 min-w-[140px]">
                   <span class="whitespace-nowrap">Año que lo cursó:</span>
                   <input type="text" data-field="pi_anio_curso" class="ficha-input flex-1 ml-1 ficha-input-center" />
@@ -719,24 +786,33 @@
               <div class="flex flex-wrap items-baseline gap-3">
                 <div class="flex items-baseline">
                   <span>¿Posee partida de nacimiento? Sí</span>
-                  <span class="ficha-check-box" data-group="pi_posee_partida" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_posee_partida" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span>No</span>
-                  <span class="ficha-check-box" data-group="pi_posee_partida" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_posee_partida" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
                 <div class="flex items-baseline">
                   <span>¿Presenta partida de nacimiento? Sí</span>
-                  <span class="ficha-check-box" data-group="pi_presenta_partida" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_presenta_partida" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span>No</span>
-                  <span class="ficha-check-box" data-group="pi_presenta_partida" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_presenta_partida" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
               </div>
 
               <div class="flex flex-wrap items-baseline gap-2">
-                <span>Etnia: No aplica</span><span class="ficha-check-box" data-group="pi_etnia" data-val="NO APLICA" onclick="selectRadioBox(this)"></span>
-                <span>Nahua-Pipil</span><span class="ficha-check-box" data-group="pi_etnia" data-val="NAHUA-PIPIL" onclick="selectRadioBox(this)"></span>
-                <span>Lenca</span><span class="ficha-check-box" data-group="pi_etnia" data-val="LENCA" onclick="selectRadioBox(this)"></span>
-                <span>Kakawira</span><span class="ficha-check-box" data-group="pi_etnia" data-val="KAKAWIRA" onclick="selectRadioBox(this)"></span>
-                <span>Otro</span><span class="ficha-check-box" data-group="pi_etnia" data-val="OTRO" onclick="selectRadioBox(this)"></span>
+                <span>Etnia: No aplica</span><span class="ficha-check-box" data-group="pi_etnia" data-val="NO APLICA"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Nahua-Pipil</span><span class="ficha-check-box" data-group="pi_etnia" data-val="NAHUA-PIPIL"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Lenca</span><span class="ficha-check-box" data-group="pi_etnia" data-val="LENCA"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Kakawira</span><span class="ficha-check-box" data-group="pi_etnia" data-val="KAKAWIRA"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Otro</span><span class="ficha-check-box" data-group="pi_etnia" data-val="OTRO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
 
               <div class="flex items-baseline">
@@ -765,7 +841,8 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline w-[36%]">
                   <span class="whitespace-nowrap">Fecha nac.:</span>
-                  <input type="text" data-field="pi_madre_fn" placeholder="DD/MM/AAAA" class="ficha-input flex-1 ml-1 ficha-input-center" />
+                  <input type="text" data-field="pi_madre_fn" placeholder="DD/MM/AAAA"
+                    class="ficha-input flex-1 ml-1 ficha-input-center" />
                 </div>
                 <div class="flex items-baseline w-[18%]">
                   <span class="whitespace-nowrap">Edad:</span>
@@ -796,8 +873,10 @@
                   <input type="text" data-field="pi_madre_ocupacion" class="ficha-input flex-1 ml-1" />
                 </div>
                 <div class="flex items-baseline">
-                  <span>WhatsApp: Sí</span><span class="ficha-check-box" data-group="pi_madre_wa" data-val="SÍ" onclick="selectRadioBox(this)"></span>
-                  <span>No</span><span class="ficha-check-box" data-group="pi_madre_wa" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span>WhatsApp: Sí</span><span class="ficha-check-box" data-group="pi_madre_wa" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
+                  <span>No</span><span class="ficha-check-box" data-group="pi_madre_wa" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
               </div>
             </div>
@@ -822,7 +901,8 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline w-[36%]">
                   <span class="whitespace-nowrap">Fecha nac.:</span>
-                  <input type="text" data-field="pi_padre_fn" placeholder="DD/MM/AAAA" class="ficha-input flex-1 ml-1 ficha-input-center" />
+                  <input type="text" data-field="pi_padre_fn" placeholder="DD/MM/AAAA"
+                    class="ficha-input flex-1 ml-1 ficha-input-center" />
                 </div>
                 <div class="flex items-baseline w-[18%]">
                   <span class="whitespace-nowrap">Edad:</span>
@@ -853,8 +933,10 @@
                   <input type="text" data-field="pi_padre_ocupacion" class="ficha-input flex-1 ml-1" />
                 </div>
                 <div class="flex items-baseline">
-                  <span>WhatsApp: Sí</span><span class="ficha-check-box" data-group="pi_padre_wa" data-val="SÍ" onclick="selectRadioBox(this)"></span>
-                  <span>No</span><span class="ficha-check-box" data-group="pi_padre_wa" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span>WhatsApp: Sí</span><span class="ficha-check-box" data-group="pi_padre_wa" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
+                  <span>No</span><span class="ficha-check-box" data-group="pi_padre_wa" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
               </div>
             </div>
@@ -905,67 +987,107 @@
             </div>
 
             <!-- 3. CONDICIÓN DE DISCAPACIDAD -->
-            <div class="ficha-section-bar">3. CONDICIÓN DE DISCAPACIDAD DE LA NIÑA O NIÑO (Puede marcar más de una)</div>
+            <div class="ficha-section-bar">3. CONDICIÓN DE DISCAPACIDAD DE LA NIÑA O NIÑO (Puede marcar más de una)
+            </div>
             <div class="grid grid-cols-3 gap-1.5 mb-2 text-[8pt]">
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_0" onclick="toggleXBox(this)"></span> 0. Ninguno</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_1" onclick="toggleXBox(this)"></span> 1. Ceguera</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_2" onclick="toggleXBox(this)"></span> 2. Baja visión</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_3" onclick="toggleXBox(this)"></span> 3. Sordera</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_4" onclick="toggleXBox(this)"></span> 4. Hipoacusia</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_5" onclick="toggleXBox(this)"></span> 5. Sordo-ceguera</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_6" onclick="toggleXBox(this)"></span> 6. Disc. intelectual</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_7" onclick="toggleXBox(this)"></span> 7. Disc. motora</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_8" onclick="toggleXBox(this)"></span> 8. Síndrome de Down</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_9" onclick="toggleXBox(this)"></span> 9. Ausencia miembros</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_10" onclick="toggleXBox(this)"></span> 10. Trastorno autista</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_11" onclick="toggleXBox(this)"></span> 11. Multidiscapacidad</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_0"
+                  onclick="toggleXBox(this)"></span> 0. Ninguno</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_1"
+                  onclick="toggleXBox(this)"></span> 1. Ceguera</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_2"
+                  onclick="toggleXBox(this)"></span> 2. Baja visión</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_3"
+                  onclick="toggleXBox(this)"></span> 3. Sordera</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_4"
+                  onclick="toggleXBox(this)"></span> 4. Hipoacusia</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_5"
+                  onclick="toggleXBox(this)"></span> 5. Sordo-ceguera</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_6"
+                  onclick="toggleXBox(this)"></span> 6. Disc. intelectual</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_7"
+                  onclick="toggleXBox(this)"></span> 7. Disc. motora</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_8"
+                  onclick="toggleXBox(this)"></span> 8. Síndrome de Down</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_9"
+                  onclick="toggleXBox(this)"></span> 9. Ausencia miembros</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_10"
+                  onclick="toggleXBox(this)"></span> 10. Trastorno autista</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_disc_11"
+                  onclick="toggleXBox(this)"></span> 11. Multidiscapacidad</label>
             </div>
             <div class="space-y-1.5 mb-3">
               <div class="flex flex-wrap items-baseline gap-3">
                 <span><strong>3.1 ¿Posee diagnóstico clínico?</strong></span>
-                <span>No Aplica</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="NO APLICA" onclick="selectRadioBox(this)"></span>
-                <span>Sí</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="SÍ" onclick="selectRadioBox(this)"></span>
-                <span>No</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span>No Aplica</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="NO APLICA"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Sí</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="SÍ"
+                  onclick="selectRadioBox(this)"></span>
+                <span>No</span><span class="ficha-check-box" data-group="pi_diag_clinico" data-val="NO"
+                  onclick="selectRadioBox(this)"></span>
               </div>
               <div class="flex flex-wrap items-baseline gap-2">
                 <span><strong>3.2 El NN ha sido referido a:</strong></span>
-                <span>No Aplica</span><span class="ficha-check-box" data-field="pi_ref_na" onclick="toggleXBox(this)"></span>
-                <span>Docente apoyo inclusión</span><span class="ficha-check-box" data-field="pi_ref_dai" onclick="toggleXBox(this)"></span>
-                <span>Centro Orientación y Recursos</span><span class="ficha-check-box" data-field="pi_ref_cor" onclick="toggleXBox(this)"></span>
+                <span>No Aplica</span><span class="ficha-check-box" data-field="pi_ref_na"
+                  onclick="toggleXBox(this)"></span>
+                <span>Docente apoyo inclusión</span><span class="ficha-check-box" data-field="pi_ref_dai"
+                  onclick="toggleXBox(this)"></span>
+                <span>Centro Orientación y Recursos</span><span class="ficha-check-box" data-field="pi_ref_cor"
+                  onclick="toggleXBox(this)"></span>
               </div>
               <div class="flex flex-wrap items-baseline gap-2">
                 <span><strong>3.3 El NN recibe:</strong></span>
-                <span>No Aplica</span><span class="ficha-check-box" data-field="pi_rec_na" onclick="toggleXBox(this)"></span>
-                <span>Terapia Lenguaje</span><span class="ficha-check-box" data-field="pi_rec_leng" onclick="toggleXBox(this)"></span>
-                <span>Fisioterapia</span><span class="ficha-check-box" data-field="pi_rec_fisio" onclick="toggleXBox(this)"></span>
-                <span>Atención psicológica</span><span class="ficha-check-box" data-field="pi_rec_psico" onclick="toggleXBox(this)"></span>
-                <span>Otro</span><span class="ficha-check-box" data-field="pi_rec_otro" onclick="toggleXBox(this)"></span>
+                <span>No Aplica</span><span class="ficha-check-box" data-field="pi_rec_na"
+                  onclick="toggleXBox(this)"></span>
+                <span>Terapia Lenguaje</span><span class="ficha-check-box" data-field="pi_rec_leng"
+                  onclick="toggleXBox(this)"></span>
+                <span>Fisioterapia</span><span class="ficha-check-box" data-field="pi_rec_fisio"
+                  onclick="toggleXBox(this)"></span>
+                <span>Atención psicológica</span><span class="ficha-check-box" data-field="pi_rec_psico"
+                  onclick="toggleXBox(this)"></span>
+                <span>Otro</span><span class="ficha-check-box" data-field="pi_rec_otro"
+                  onclick="toggleXBox(this)"></span>
               </div>
             </div>
 
             <!-- 4. CONVIVENCIA FAMILIAR -->
             <div class="ficha-section-bar">4. CONVIVENCIA FAMILIAR: Entorno familiar de la niña o el niño</div>
             <div class="grid grid-cols-2 gap-1.5 mb-3 text-[8pt]">
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="1" onclick="selectRadioBox(this)"></span> 1. Vive con madre y padre</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="6" onclick="selectRadioBox(this)"></span> 6. Vive con madre y padrastro</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="2" onclick="selectRadioBox(this)"></span> 2. Vive solo con madre</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="7" onclick="selectRadioBox(this)"></span> 7. Vive con padre y madrastra</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="3" onclick="selectRadioBox(this)"></span> 3. Vive solo con el padre</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="8" onclick="selectRadioBox(this)"></span> 8. Vive con familiar(es) distinto de padres</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="4" onclick="selectRadioBox(this)"></span> 4. Vive con madre y otro(s) familiar(es)</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="9" onclick="selectRadioBox(this)"></span> 9. No vive con familiares</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia" data-val="5" onclick="selectRadioBox(this)"></span> 5. Vive con padre y otro(s) familiar(es)</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="1" onclick="selectRadioBox(this)"></span> 1. Vive con madre y padre</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="6" onclick="selectRadioBox(this)"></span> 6. Vive con madre y padrastro</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="2" onclick="selectRadioBox(this)"></span> 2. Vive solo con madre</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="7" onclick="selectRadioBox(this)"></span> 7. Vive con padre y madrastra</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="3" onclick="selectRadioBox(this)"></span> 3. Vive solo con el padre</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="8" onclick="selectRadioBox(this)"></span> 8. Vive con familiar(es) distinto de
+                padres</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="4" onclick="selectRadioBox(this)"></span> 4. Vive con madre y otro(s) familiar(es)</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="9" onclick="selectRadioBox(this)"></span> 9. No vive con familiares</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-group="pi_convivencia"
+                  data-val="5" onclick="selectRadioBox(this)"></span> 5. Vive con padre y otro(s) familiar(es)</label>
             </div>
 
             <!-- 5. INGRESO FAMILIAR -->
             <div class="ficha-section-bar">5. INGRESO FAMILIAR</div>
             <div class="grid grid-cols-3 gap-1.5 text-[8pt]">
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_1" onclick="toggleXBox(this)"></span> 1. Trabajo remunerado formal</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_2" onclick="toggleXBox(this)"></span> 2. Trabajo remunerado informal</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_3" onclick="toggleXBox(this)"></span> 3. Remesa</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_4" onclick="toggleXBox(this)"></span> 4. Negocio propio</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_5" onclick="toggleXBox(this)"></span> 5. Apoyo del Gobierno</label>
-              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_6" onclick="toggleXBox(this)"></span> 6. Pensión / 7. Otro</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_1"
+                  onclick="toggleXBox(this)"></span> 1. Trabajo remunerado formal</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_2"
+                  onclick="toggleXBox(this)"></span> 2. Trabajo remunerado informal</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_3"
+                  onclick="toggleXBox(this)"></span> 3. Remesa</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_4"
+                  onclick="toggleXBox(this)"></span> 4. Negocio propio</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_5"
+                  onclick="toggleXBox(this)"></span> 5. Apoyo del Gobierno</label>
+              <label class="flex items-center gap-1"><span class="ficha-check-box" data-field="pi_ing_6"
+                  onclick="toggleXBox(this)"></span> 6. Pensión / 7. Otro</label>
             </div>
           </div>
 
@@ -975,96 +1097,145 @@
             <div class="space-y-2">
               <div class="flex flex-wrap items-baseline gap-2 border-b border-slate-200 pb-1.5">
                 <strong>6.1 Posesión y Zona:</strong>
-                <span>Rural</span><span class="ficha-check-box" data-group="pi_zona" data-val="RURAL" onclick="selectRadioBox(this)"></span>
-                <span>Urbana</span><span class="ficha-check-box" data-group="pi_zona" data-val="URBANA" onclick="selectRadioBox(this)"></span>
-                <span class="ml-2">| 1. Propia</span><span class="ficha-check-box" data-field="pi_viv_propia" onclick="toggleXBox(this)"></span>
-                <span>2. Alquilada</span><span class="ficha-check-box" data-field="pi_viv_alquilada" onclick="toggleXBox(this)"></span>
-                <span>3. Prestada</span><span class="ficha-check-box" data-field="pi_viv_prestada" onclick="toggleXBox(this)"></span>
-                <span>4. Otra</span><span class="ficha-check-box" data-field="pi_viv_otra" onclick="toggleXBox(this)"></span>
+                <span>Rural</span><span class="ficha-check-box" data-group="pi_zona" data-val="RURAL"
+                  onclick="selectRadioBox(this)"></span>
+                <span>Urbana</span><span class="ficha-check-box" data-group="pi_zona" data-val="URBANA"
+                  onclick="selectRadioBox(this)"></span>
+                <span class="ml-2">| 1. Propia</span><span class="ficha-check-box" data-field="pi_viv_propia"
+                  onclick="toggleXBox(this)"></span>
+                <span>2. Alquilada</span><span class="ficha-check-box" data-field="pi_viv_alquilada"
+                  onclick="toggleXBox(this)"></span>
+                <span>3. Prestada</span><span class="ficha-check-box" data-field="pi_viv_prestada"
+                  onclick="toggleXBox(this)"></span>
+                <span>4. Otra</span><span class="ficha-check-box" data-field="pi_viv_otra"
+                  onclick="toggleXBox(this)"></span>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.2 Material predominante de las paredes:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_par_1" onclick="toggleXBox(this)"></span> 1. Concreto o mixto</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_2" onclick="toggleXBox(this)"></span> 2. Madera</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_3" onclick="toggleXBox(this)"></span> 3. Paja o palma</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_5" onclick="toggleXBox(this)"></span> 5. Bajareque</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_6" onclick="toggleXBox(this)"></span> 6. Lámina buen estado</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_8" onclick="toggleXBox(this)"></span> 8. Adobe</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_9" onclick="toggleXBox(this)"></span> 9. Lámina mal estado</label>
-                  <label><span class="ficha-check-box" data-field="pi_par_7" onclick="toggleXBox(this)"></span> 7. Mat. desecho / Otros</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_1" onclick="toggleXBox(this)"></span> 1.
+                    Concreto o mixto</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_2" onclick="toggleXBox(this)"></span> 2.
+                    Madera</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_3" onclick="toggleXBox(this)"></span> 3. Paja
+                    o palma</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_5" onclick="toggleXBox(this)"></span> 5.
+                    Bajareque</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_6" onclick="toggleXBox(this)"></span> 6.
+                    Lámina buen estado</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_8" onclick="toggleXBox(this)"></span> 8.
+                    Adobe</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_9" onclick="toggleXBox(this)"></span> 9.
+                    Lámina mal estado</label>
+                  <label><span class="ficha-check-box" data-field="pi_par_7" onclick="toggleXBox(this)"></span> 7. Mat.
+                    desecho / Otros</label>
                 </div>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.3 Material predominante del piso:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_piso_1" onclick="toggleXBox(this)"></span> 1. Ladrillo cerámico</label>
-                  <label><span class="ficha-check-box" data-field="pi_piso_2" onclick="toggleXBox(this)"></span> 2. Cemento</label>
-                  <label><span class="ficha-check-box" data-field="pi_piso_3" onclick="toggleXBox(this)"></span> 3. Ladrillo de cemento</label>
-                  <label><span class="ficha-check-box" data-field="pi_piso_4" onclick="toggleXBox(this)"></span> 4. Tierra</label>
-                  <label><span class="ficha-check-box" data-field="pi_piso_5" onclick="toggleXBox(this)"></span> 5. Ladrillo de barro</label>
-                  <label><span class="ficha-check-box" data-field="pi_piso_6" onclick="toggleXBox(this)"></span> 6. Otros materiales</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_1" onclick="toggleXBox(this)"></span> 1.
+                    Ladrillo cerámico</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_2" onclick="toggleXBox(this)"></span> 2.
+                    Cemento</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_3" onclick="toggleXBox(this)"></span> 3.
+                    Ladrillo de cemento</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_4" onclick="toggleXBox(this)"></span> 4.
+                    Tierra</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_5" onclick="toggleXBox(this)"></span> 5.
+                    Ladrillo de barro</label>
+                  <label><span class="ficha-check-box" data-field="pi_piso_6" onclick="toggleXBox(this)"></span> 6.
+                    Otros materiales</label>
                 </div>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.4 Material predominante del techo:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_techo_1" onclick="toggleXBox(this)"></span> 1. Loza de concreto</label>
-                  <label><span class="ficha-check-box" data-field="pi_techo_2" onclick="toggleXBox(this)"></span> 2. Lámina buen estado</label>
-                  <label><span class="ficha-check-box" data-field="pi_techo_4" onclick="toggleXBox(this)"></span> 4. Teja barro/cemento</label>
-                  <label><span class="ficha-check-box" data-field="pi_techo_5" onclick="toggleXBox(this)"></span> 5. Lámina mal estado</label>
-                  <label><span class="ficha-check-box" data-field="pi_techo_7" onclick="toggleXBox(this)"></span> 7. Duralita / Asbesto</label>
-                  <label><span class="ficha-check-box" data-field="pi_techo_6" onclick="toggleXBox(this)"></span> 6. Paja / Palma / Otro</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_1" onclick="toggleXBox(this)"></span> 1.
+                    Loza de concreto</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_2" onclick="toggleXBox(this)"></span> 2.
+                    Lámina buen estado</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_4" onclick="toggleXBox(this)"></span> 4.
+                    Teja barro/cemento</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_5" onclick="toggleXBox(this)"></span> 5.
+                    Lámina mal estado</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_7" onclick="toggleXBox(this)"></span> 7.
+                    Duralita / Asbesto</label>
+                  <label><span class="ficha-check-box" data-field="pi_techo_6" onclick="toggleXBox(this)"></span> 6.
+                    Paja / Palma / Otro</label>
                 </div>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.5 Servicios básicos de luz:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_luz_1" onclick="toggleXBox(this)"></span> 1. Electricidad</label>
-                  <label><span class="ficha-check-box" data-field="pi_luz_2" onclick="toggleXBox(this)"></span> 2. Candela</label>
-                  <label><span class="ficha-check-box" data-field="pi_luz_3" onclick="toggleXBox(this)"></span> 3. Conexión del vecino</label>
-                  <label><span class="ficha-check-box" data-field="pi_luz_4" onclick="toggleXBox(this)"></span> 4. Panel solar</label>
-                  <label><span class="ficha-check-box" data-field="pi_luz_5" onclick="toggleXBox(this)"></span> 5. Lámpara / Generador</label>
+                  <label><span class="ficha-check-box" data-field="pi_luz_1" onclick="toggleXBox(this)"></span> 1.
+                    Electricidad</label>
+                  <label><span class="ficha-check-box" data-field="pi_luz_2" onclick="toggleXBox(this)"></span> 2.
+                    Candela</label>
+                  <label><span class="ficha-check-box" data-field="pi_luz_3" onclick="toggleXBox(this)"></span> 3.
+                    Conexión del vecino</label>
+                  <label><span class="ficha-check-box" data-field="pi_luz_4" onclick="toggleXBox(this)"></span> 4. Panel
+                    solar</label>
+                  <label><span class="ficha-check-box" data-field="pi_luz_5" onclick="toggleXBox(this)"></span> 5.
+                    Lámpara / Generador</label>
                 </div>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.6 Servicio básico de agua:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_agua_1" onclick="toggleXBox(this)"></span> 1. Cañería ANDA/privada</label>
-                  <label><span class="ficha-check-box" data-field="pi_agua_2" onclick="toggleXBox(this)"></span> 2. Cañería pública</label>
-                  <label><span class="ficha-check-box" data-field="pi_agua_3" onclick="toggleXBox(this)"></span> 3. Pozo en propiedad</label>
-                  <label><span class="ficha-check-box" data-field="pi_agua_4" onclick="toggleXBox(this)"></span> 4. Pozo comunitario</label>
-                  <label><span class="ficha-check-box" data-field="pi_agua_5" onclick="toggleXBox(this)"></span> 5. Pipa / Agua lluvia</label>
-                  <label><span class="ficha-check-box" data-field="pi_agua_6" onclick="toggleXBox(this)"></span> 6. Río / Quebrada / Otro</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_1" onclick="toggleXBox(this)"></span> 1.
+                    Cañería ANDA/privada</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_2" onclick="toggleXBox(this)"></span> 2.
+                    Cañería pública</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_3" onclick="toggleXBox(this)"></span> 3. Pozo
+                    en propiedad</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_4" onclick="toggleXBox(this)"></span> 4. Pozo
+                    comunitario</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_5" onclick="toggleXBox(this)"></span> 5. Pipa
+                    / Agua lluvia</label>
+                  <label><span class="ficha-check-box" data-field="pi_agua_6" onclick="toggleXBox(this)"></span> 6. Río
+                    / Quebrada / Otro</label>
                 </div>
               </div>
 
               <div class="border-b border-slate-200 pb-1.5">
                 <strong class="block mb-1">6.7 Tipo de servicio sanitario en la vivienda:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_san_1" onclick="toggleXBox(this)"></span> 1. Inodoro alcantarillado</label>
-                  <label><span class="ficha-check-box" data-field="pi_san_2" onclick="toggleXBox(this)"></span> 2. Letrina abonera</label>
-                  <label><span class="ficha-check-box" data-field="pi_san_3" onclick="toggleXBox(this)"></span> 3. Letrina solar</label>
-                  <label><span class="ficha-check-box" data-field="pi_san_4" onclick="toggleXBox(this)"></span> 4. Inodoro fosa séptica</label>
-                  <label><span class="ficha-check-box" data-field="pi_san_5" onclick="toggleXBox(this)"></span> 5. Letrina hoyo seco</label>
-                  <label><span class="ficha-check-box" data-field="pi_san_6" onclick="toggleXBox(this)"></span> 6. N/A / Otro</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_1" onclick="toggleXBox(this)"></span> 1.
+                    Inodoro alcantarillado</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_2" onclick="toggleXBox(this)"></span> 2.
+                    Letrina abonera</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_3" onclick="toggleXBox(this)"></span> 3.
+                    Letrina solar</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_4" onclick="toggleXBox(this)"></span> 4.
+                    Inodoro fosa séptica</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_5" onclick="toggleXBox(this)"></span> 5.
+                    Letrina hoyo seco</label>
+                  <label><span class="ficha-check-box" data-field="pi_san_6" onclick="toggleXBox(this)"></span> 6. N/A /
+                    Otro</label>
                 </div>
               </div>
 
               <div>
                 <strong class="block mb-1">6.8 Medios de comunicación en el hogar:</strong>
                 <div class="grid grid-cols-3 gap-1">
-                  <label><span class="ficha-check-box" data-field="pi_med_1" onclick="toggleXBox(this)"></span> 1. Teléfono fijo</label>
-                  <label><span class="ficha-check-box" data-field="pi_med_2" onclick="toggleXBox(this)"></span> 2. Teléfono celular</label>
-                  <label><span class="ficha-check-box" data-field="pi_med_3" onclick="toggleXBox(this)"></span> 3. Internet</label>
-                  <label><span class="ficha-check-box" data-field="pi_med_4" onclick="toggleXBox(this)"></span> 4. Televisión</label>
-                  <label><span class="ficha-check-box" data-field="pi_med_5" onclick="toggleXBox(this)"></span> 5. Radio</label>
-                  <label><span class="ficha-check-box" data-field="pi_med_6" onclick="toggleXBox(this)"></span> 6. Correo electrónico</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_1" onclick="toggleXBox(this)"></span> 1.
+                    Teléfono fijo</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_2" onclick="toggleXBox(this)"></span> 2.
+                    Teléfono celular</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_3" onclick="toggleXBox(this)"></span> 3.
+                    Internet</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_4" onclick="toggleXBox(this)"></span> 4.
+                    Televisión</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_5" onclick="toggleXBox(this)"></span> 5.
+                    Radio</label>
+                  <label><span class="ficha-check-box" data-field="pi_med_6" onclick="toggleXBox(this)"></span> 6.
+                    Correo electrónico</label>
                 </div>
               </div>
             </div>
@@ -1075,12 +1246,18 @@
             <div class="mb-2">
               <strong class="block mb-1">6.9 Redes sociales que utiliza:</strong>
               <div class="flex flex-wrap gap-3">
-                <label><span class="ficha-check-box" data-field="pi_red_wa" onclick="toggleXBox(this)"></span> 1. WhatsApp</label>
-                <label><span class="ficha-check-box" data-field="pi_red_fb" onclick="toggleXBox(this)"></span> 2. Facebook</label>
-                <label><span class="ficha-check-box" data-field="pi_red_msg" onclick="toggleXBox(this)"></span> 3. Messenger</label>
-                <label><span class="ficha-check-box" data-field="pi_red_ig" onclick="toggleXBox(this)"></span> 4. Instagram</label>
-                <label><span class="ficha-check-box" data-field="pi_red_tg" onclick="toggleXBox(this)"></span> 5. Telegram</label>
-                <label><span class="ficha-check-box" data-field="pi_red_otro" onclick="toggleXBox(this)"></span> 6. Otro</label>
+                <label><span class="ficha-check-box" data-field="pi_red_wa" onclick="toggleXBox(this)"></span> 1.
+                  WhatsApp</label>
+                <label><span class="ficha-check-box" data-field="pi_red_fb" onclick="toggleXBox(this)"></span> 2.
+                  Facebook</label>
+                <label><span class="ficha-check-box" data-field="pi_red_msg" onclick="toggleXBox(this)"></span> 3.
+                  Messenger</label>
+                <label><span class="ficha-check-box" data-field="pi_red_ig" onclick="toggleXBox(this)"></span> 4.
+                  Instagram</label>
+                <label><span class="ficha-check-box" data-field="pi_red_tg" onclick="toggleXBox(this)"></span> 5.
+                  Telegram</label>
+                <label><span class="ficha-check-box" data-field="pi_red_otro" onclick="toggleXBox(this)"></span> 6.
+                  Otro</label>
               </div>
             </div>
 
@@ -1101,9 +1278,11 @@
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline">
                   <span>¿Tiene dificultad para dormir? Sí</span>
-                  <span class="ficha-check-box" data-group="pi_dif_dormir" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_dif_dormir" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span>No</span>
-                  <span class="ficha-check-box" data-group="pi_dif_dormir" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_dif_dormir" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
                 <div class="flex items-baseline flex-1 ml-2">
                   <span class="whitespace-nowrap">Explique:</span>
@@ -1112,20 +1291,27 @@
               </div>
               <div class="flex flex-wrap items-baseline gap-2">
                 <span>Con quién duerme:</span>
-                <span>Solo</span><span class="ficha-check-box" data-field="pi_duerme_solo" onclick="toggleXBox(this)"></span>
-                <span>Mamá y Papá</span><span class="ficha-check-box" data-field="pi_duerme_ambos" onclick="toggleXBox(this)"></span>
-                <span>Mamá</span><span class="ficha-check-box" data-field="pi_duerme_mama" onclick="toggleXBox(this)"></span>
-                <span>Papá</span><span class="ficha-check-box" data-field="pi_duerme_papa" onclick="toggleXBox(this)"></span>
-                <span>Hermanos/as</span><span class="ficha-check-box" data-field="pi_duerme_hnos" onclick="toggleXBox(this)"></span>
+                <span>Solo</span><span class="ficha-check-box" data-field="pi_duerme_solo"
+                  onclick="toggleXBox(this)"></span>
+                <span>Mamá y Papá</span><span class="ficha-check-box" data-field="pi_duerme_ambos"
+                  onclick="toggleXBox(this)"></span>
+                <span>Mamá</span><span class="ficha-check-box" data-field="pi_duerme_mama"
+                  onclick="toggleXBox(this)"></span>
+                <span>Papá</span><span class="ficha-check-box" data-field="pi_duerme_papa"
+                  onclick="toggleXBox(this)"></span>
+                <span>Hermanos/as</span><span class="ficha-check-box" data-field="pi_duerme_hnos"
+                  onclick="toggleXBox(this)"></span>
               </div>
 
               <div><strong>7.2 Alimentación</strong></div>
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline">
                   <span>¿Lactancia materna exclusiva? Sí</span>
-                  <span class="ficha-check-box" data-group="pi_lactancia" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_lactancia" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span>No</span>
-                  <span class="ficha-check-box" data-group="pi_lactancia" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_lactancia" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
                 <div class="flex items-baseline flex-1 ml-2">
                   <span class="whitespace-nowrap">¿Cuánto tiempo (meses)?:</span>
@@ -1135,38 +1321,54 @@
 
               <div class="flex flex-wrap items-baseline gap-2">
                 <strong>7.3 Alimentos que consume:</strong>
-                <span>Leche</span><span class="ficha-check-box" data-field="pi_ali_leche" onclick="toggleXBox(this)"></span>
-                <span>Verduras</span><span class="ficha-check-box" data-field="pi_ali_verd" onclick="toggleXBox(this)"></span>
-                <span>Frutas</span><span class="ficha-check-box" data-field="pi_ali_frut" onclick="toggleXBox(this)"></span>
+                <span>Leche</span><span class="ficha-check-box" data-field="pi_ali_leche"
+                  onclick="toggleXBox(this)"></span>
+                <span>Verduras</span><span class="ficha-check-box" data-field="pi_ali_verd"
+                  onclick="toggleXBox(this)"></span>
+                <span>Frutas</span><span class="ficha-check-box" data-field="pi_ali_frut"
+                  onclick="toggleXBox(this)"></span>
                 <span>Res</span><span class="ficha-check-box" data-field="pi_ali_res" onclick="toggleXBox(this)"></span>
-                <span>Pollo</span><span class="ficha-check-box" data-field="pi_ali_pollo" onclick="toggleXBox(this)"></span>
-                <span>Arroz</span><span class="ficha-check-box" data-field="pi_ali_arroz" onclick="toggleXBox(this)"></span>
-                <span>Frijoles</span><span class="ficha-check-box" data-field="pi_ali_frij" onclick="toggleXBox(this)"></span>
-                <span>Huevos</span><span class="ficha-check-box" data-field="pi_ali_huev" onclick="toggleXBox(this)"></span>
+                <span>Pollo</span><span class="ficha-check-box" data-field="pi_ali_pollo"
+                  onclick="toggleXBox(this)"></span>
+                <span>Arroz</span><span class="ficha-check-box" data-field="pi_ali_arroz"
+                  onclick="toggleXBox(this)"></span>
+                <span>Frijoles</span><span class="ficha-check-box" data-field="pi_ali_frij"
+                  onclick="toggleXBox(this)"></span>
+                <span>Huevos</span><span class="ficha-check-box" data-field="pi_ali_huev"
+                  onclick="toggleXBox(this)"></span>
               </div>
 
               <div class="flex flex-wrap items-baseline gap-3">
                 <div>
                   <strong>7.4 Comidas:</strong>
-                  <span>Desayuno</span><span class="ficha-check-box" data-field="pi_com_des" onclick="toggleXBox(this)"></span>
-                  <span>Almuerzo</span><span class="ficha-check-box" data-field="pi_com_alm" onclick="toggleXBox(this)"></span>
-                  <span>Cena</span><span class="ficha-check-box" data-field="pi_com_cen" onclick="toggleXBox(this)"></span>
+                  <span>Desayuno</span><span class="ficha-check-box" data-field="pi_com_des"
+                    onclick="toggleXBox(this)"></span>
+                  <span>Almuerzo</span><span class="ficha-check-box" data-field="pi_com_alm"
+                    onclick="toggleXBox(this)"></span>
+                  <span>Cena</span><span class="ficha-check-box" data-field="pi_com_cen"
+                    onclick="toggleXBox(this)"></span>
                 </div>
                 <div>
                   <strong>7.5 Refrigerios:</strong>
-                  <span>1</span><span class="ficha-check-box" data-group="pi_refrig" data-val="1" onclick="selectRadioBox(this)"></span>
-                  <span>2</span><span class="ficha-check-box" data-group="pi_refrig" data-val="2" onclick="selectRadioBox(this)"></span>
-                  <span>3</span><span class="ficha-check-box" data-group="pi_refrig" data-val="3" onclick="selectRadioBox(this)"></span>
-                  <span>Ninguno</span><span class="ficha-check-box" data-group="pi_refrig" data-val="0" onclick="selectRadioBox(this)"></span>
+                  <span>1</span><span class="ficha-check-box" data-group="pi_refrig" data-val="1"
+                    onclick="selectRadioBox(this)"></span>
+                  <span>2</span><span class="ficha-check-box" data-group="pi_refrig" data-val="2"
+                    onclick="selectRadioBox(this)"></span>
+                  <span>3</span><span class="ficha-check-box" data-group="pi_refrig" data-val="3"
+                    onclick="selectRadioBox(this)"></span>
+                  <span>Ninguno</span><span class="ficha-check-box" data-group="pi_refrig" data-val="0"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
               </div>
 
               <div class="flex items-baseline gap-2">
                 <div class="flex items-baseline">
                   <span><strong>7.6 ¿Alérgico a algún alimento?</strong> Sí</span>
-                  <span class="ficha-check-box" data-group="pi_alergia_ali" data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_alergia_ali" data-val="SÍ"
+                    onclick="selectRadioBox(this)"></span>
                   <span>No</span>
-                  <span class="ficha-check-box" data-group="pi_alergia_ali" data-val="NO" onclick="selectRadioBox(this)"></span>
+                  <span class="ficha-check-box" data-group="pi_alergia_ali" data-val="NO"
+                    onclick="selectRadioBox(this)"></span>
                 </div>
                 <div class="flex items-baseline flex-1 ml-2">
                   <span class="whitespace-nowrap">¿A cuál(es)?:</span>
@@ -1180,13 +1382,20 @@
             <div class="space-y-1.5 mb-2">
               <div class="flex flex-wrap items-baseline gap-2">
                 <span>¿En qué actividad les gustaría apoyar?</span>
-                <span>Educativas</span><span class="ficha-check-box" data-field="pi_apoyo_edu" onclick="toggleXBox(this)"></span>
-                <span>Recreativas</span><span class="ficha-check-box" data-field="pi_apoyo_rec" onclick="toggleXBox(this)"></span>
-                <span>Salud</span><span class="ficha-check-box" data-field="pi_apoyo_sal" onclick="toggleXBox(this)"></span>
-                <span>Cocina</span><span class="ficha-check-box" data-field="pi_apoyo_coc" onclick="toggleXBox(this)"></span>
-                <span>Culturales</span><span class="ficha-check-box" data-field="pi_apoyo_cul" onclick="toggleXBox(this)"></span>
-                <span>Deportivas</span><span class="ficha-check-box" data-field="pi_apoyo_dep" onclick="toggleXBox(this)"></span>
-                <span>Higiene y Ornato</span><span class="ficha-check-box" data-field="pi_apoyo_hig" onclick="toggleXBox(this)"></span>
+                <span>Educativas</span><span class="ficha-check-box" data-field="pi_apoyo_edu"
+                  onclick="toggleXBox(this)"></span>
+                <span>Recreativas</span><span class="ficha-check-box" data-field="pi_apoyo_rec"
+                  onclick="toggleXBox(this)"></span>
+                <span>Salud</span><span class="ficha-check-box" data-field="pi_apoyo_sal"
+                  onclick="toggleXBox(this)"></span>
+                <span>Cocina</span><span class="ficha-check-box" data-field="pi_apoyo_coc"
+                  onclick="toggleXBox(this)"></span>
+                <span>Culturales</span><span class="ficha-check-box" data-field="pi_apoyo_cul"
+                  onclick="toggleXBox(this)"></span>
+                <span>Deportivas</span><span class="ficha-check-box" data-field="pi_apoyo_dep"
+                  onclick="toggleXBox(this)"></span>
+                <span>Higiene y Ornato</span><span class="ficha-check-box" data-field="pi_apoyo_hig"
+                  onclick="toggleXBox(this)"></span>
               </div>
               <div class="flex items-baseline">
                 <span class="whitespace-nowrap">Observaciones:</span>
@@ -1199,11 +1408,14 @@
             <div class="space-y-2">
               <div class="flex flex-wrap items-baseline gap-2">
                 <span>Modalidad de atención:</span>
-                <span>Círculo de familia</span><span class="ficha-check-box" data-group="pi_modalidad" data-val="CIRCULO" onclick="selectRadioBox(this)"></span>
-                <span>Parvularia / Educación Inicial</span><span class="ficha-check-box" data-group="pi_modalidad" data-val="PARVULARIA" onclick="selectRadioBox(this)"></span>
+                <span>Círculo de familia</span><span class="ficha-check-box" data-group="pi_modalidad"
+                  data-val="CIRCULO" onclick="selectRadioBox(this)"></span>
+                <span>Parvularia / Educación Inicial</span><span class="ficha-check-box" data-group="pi_modalidad"
+                  data-val="PARVULARIA" onclick="selectRadioBox(this)"></span>
                 <div class="flex items-baseline flex-1 min-w-[160px]">
                   <span class="whitespace-nowrap">Fecha inscripción:</span>
-                  <input type="text" data-field="pi_fecha_inscripcion" placeholder="DD/MM/AAAA" class="ficha-input flex-1 ml-1 ficha-input-center" />
+                  <input type="text" data-field="pi_fecha_inscripcion" placeholder="DD/MM/AAAA"
+                    class="ficha-input flex-1 ml-1 ficha-input-center" />
                 </div>
               </div>
               <div class="flex items-baseline">
@@ -1211,9 +1423,12 @@
                 <input type="text" data-field="docente_nombre" class="ficha-input flex-1 ml-1" />
               </div>
               <div class="flex items-baseline pt-1">
-                <span>Autorizo a la institución compartir fotos de mi hijo/a con fines educativos y no lucrativos:</span>
-                <span class="ml-2 font-bold">SÍ</span><span class="ficha-check-box" data-group="autoriza_foto" data-val="SÍ" onclick="selectRadioBox(this)"></span>
-                <span class="ml-1 font-bold">NO</span><span class="ficha-check-box" data-group="autoriza_foto" data-val="NO" onclick="selectRadioBox(this)"></span>
+                <span>Autorizo a la institución compartir fotos de mi hijo/a con fines educativos y no
+                  lucrativos:</span>
+                <span class="ml-2 font-bold">SÍ</span><span class="ficha-check-box" data-group="autoriza_foto"
+                  data-val="SÍ" onclick="selectRadioBox(this)"></span>
+                <span class="ml-1 font-bold">NO</span><span class="ficha-check-box" data-group="autoriza_foto"
+                  data-val="NO" onclick="selectRadioBox(this)"></span>
               </div>
 
               <!-- Firma Madre, Padre o Responsable -->
@@ -1225,7 +1440,8 @@
                   </div>
                   <div class="flex items-baseline mt-1">
                     <span class="mr-1 whitespace-nowrap">Nombre:</span>
-                    <input type="text" data-field="encargado_firma_nombre" class="ficha-input flex-1 uppercase text-center" />
+                    <input type="text" data-field="encargado_firma_nombre"
+                      class="ficha-input flex-1 uppercase text-center" />
                   </div>
                   <div class="text-center font-bold mt-0.5 text-[8.2pt]">Firma de madre, padre o responsable</div>
                 </div>
@@ -1242,19 +1458,25 @@
   <div id="batchPrintContainer"></div>
 
   <!-- MODAL 1: MAPEO FLEXIBLE DE COLUMNAS EXCEL -->
-  <div id="mappingModal" class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+  <div id="mappingModal"
+    class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
       <div class="px-5 py-4 bg-slate-800 text-white flex items-center justify-between">
         <div>
-          <h3 class="font-bold text-base"><i class="fa-solid fa-table-columns mr-2 text-blue-400"></i>Vincular Columnas de tu Excel</h3>
-          <p class="text-xs text-slate-300">Hemos detectado automáticamente tus columnas. Verifica o ajusta las que necesites.</p>
+          <h3 class="font-bold text-base"><i class="fa-solid fa-table-columns mr-2 text-blue-400"></i>Vincular Columnas
+            de tu Excel</h3>
+          <p class="text-xs text-slate-300">Hemos detectado automáticamente tus columnas. Verifica o ajusta las que
+            necesites.</p>
         </div>
-        <button onclick="closeMappingModal()" class="text-slate-300 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeMappingModal()" class="text-slate-300 hover:text-white text-lg cursor-pointer"><i
+            class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="p-5 overflow-y-auto flex-1 space-y-4">
         <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded-lg">
-          <strong>Se encontraron <span id="detectedRowsCount">0</span> filas</strong> en tu archivo. Selecciona qué columna de tu Excel corresponde a cada campo de la ficha (puedes dejar en <em>"-- Ignorar --"</em> los datos que no tengas aún).
+          <strong>Se encontraron <span id="detectedRowsCount">0</span> filas</strong> en tu archivo. Selecciona qué
+          columna de tu Excel corresponde a cada campo de la ficha (puedes dejar en <em>"-- Ignorar --"</em> los datos
+          que no tengas aún).
         </div>
 
         <div id="mappingFieldsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -1263,8 +1485,10 @@
       </div>
 
       <div class="px-5 py-3.5 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
-        <button onclick="closeMappingModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-lg cursor-pointer">Cancelar</button>
-        <button onclick="confirmExcelMapping()" class="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow cursor-pointer">
+        <button onclick="closeMappingModal()"
+          class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-lg cursor-pointer">Cancelar</button>
+        <button onclick="confirmExcelMapping()"
+          class="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow cursor-pointer">
           <i class="fa-solid fa-check mr-1"></i> Importar Estudiantes
         </button>
       </div>
@@ -1272,19 +1496,24 @@
   </div>
 
   <!-- MODAL 2: IMPRESIÓN POR LOTE -->
-  <div id="batchModal" class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+  <div id="batchModal"
+    class="no-print fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
       <div class="px-5 py-4 bg-indigo-900 text-white flex items-center justify-between">
-        <h3 class="font-bold text-base"><i class="fa-solid fa-layer-group mr-2 text-indigo-300"></i>Impresión Masiva / Lote</h3>
-        <button onclick="closeBatchModal()" class="text-indigo-200 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="font-bold text-base"><i class="fa-solid fa-layer-group mr-2 text-indigo-300"></i>Impresión Masiva /
+          Lote</h3>
+        <button onclick="closeBatchModal()" class="text-indigo-200 hover:text-white text-lg cursor-pointer"><i
+            class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="p-5 space-y-4 text-sm">
-        <p class="text-slate-600 text-xs">Genera todas las fichas seleccionadas en un solo documento listo para imprimir o guardar como <strong>PDF multipágina</strong> (1 ficha por hoja Carta).</p>
+        <p class="text-slate-600 text-xs">Genera todas las fichas seleccionadas en un solo documento listo para imprimir
+          o guardar como <strong>PDF multipágina</strong> (1 ficha por hoja Carta).</p>
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Filtrar estudiantes a imprimir:</label>
-          <select id="batchGradeSelect" onchange="updateBatchCountPreview()" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500">
+          <select id="batchGradeSelect" onchange="updateBatchCountPreview()"
+            class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500">
             <option value="ALL">Todos los estudiantes de la base</option>
           </select>
         </div>
@@ -1296,8 +1525,10 @@
       </div>
 
       <div class="px-5 py-3.5 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
-        <button onclick="closeBatchModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-lg cursor-pointer">Cancelar</button>
-        <button onclick="executeBatchPrint()" class="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow cursor-pointer flex items-center gap-2">
+        <button onclick="closeBatchModal()"
+          class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-lg cursor-pointer">Cancelar</button>
+        <button onclick="executeBatchPrint()"
+          class="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow cursor-pointer flex items-center gap-2">
           <i class="fa-solid fa-print"></i> Generar e Imprimir Lote
         </button>
       </div>
@@ -1307,4 +1538,5 @@
   <!-- LÓGICA DE LA APLICACIÓN (Archivo externo) -->
   <script src="script.js"></script>
 </body>
+
 </html>
