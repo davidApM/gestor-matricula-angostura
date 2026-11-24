@@ -54,295 +54,50 @@ const FIELD_DEFINITIONS = [
     { key: 'autoriza_foto', label: 'Autoriza fotografía (SÍ/NO)', aliases: ['autoriza foto', 'fotografiado', 'autorizo foto'] },
     { key: 'compromiso_nombre', label: 'Nombre en Compromiso (Yo ___)', aliases: ['compromiso nombre', 'nombre compromiso'] },
     { key: 'docente_nombre', label: 'Nombre Docente Responsable', aliases: ['docente responsable', 'docente nombre', 'docente'] },
-    { key: 'encargado_firma_nombre', label: 'Nombre Firma Encargado', aliases: ['encargado firma', 'firma encargado', 'padre madre o encargado'] }
+    { key: 'encargado_firma_nombre', label: 'Nombre Firma Encargado', aliases: ['encargado firma', 'firma encargado', 'padre madre o encargado'] },
+    { key: 'datos_primera_infancia_json', label: 'Datos Extra Primera Infancia (JSON)', aliases: ['datos primera infancia'] }
 ];
 
+let activeFormTemplate = 'general'; // 'general' o 'infancia'
 // =========================================================================
-// 2. ESTADO GLOBAL DE LA APLICACIÓN Y CONEXIÓN GOOGLE SHEETS (APPS SCRIPT)
+// 4. INTERACCIÓN CON CASILLAS SÍ / NO DE LA FICHA OFICIAL Y CAMBIO DE FORMATO
 // =========================================================================
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
-let ACCESS_PIN = ""; // Se asigna al desbloquear la pantalla de acceso
+function isPrimeraInfanciaGrade(gradeStr) {
+    const norm = normalizeText(gradeStr);
+    if (!norm) return false;
+    if (norm.includes('parvularia') || norm.includes('inicial')) return true;
+    if ((norm.includes('1') || norm.includes('primer')) && norm.includes('grado')) return true;
+    return false;
+}
 
-let studentsDB = [];
-let currentStudentIndex = -1; // -1 = Nuevo estudiante
-let rawImportedRows = [];
-let rawImportedHeaders = [];
+function switchFormTemplate(templateType) {
+    activeFormTemplate = templateType;
+    const generalSheet = document.getElementById('fichaFormSheet');
+    const infanciaWrapper = document.getElementById('fichaPrimeraInfanciaWrapper');
+    const btnGen = document.getElementById('tabBtnGeneral');
+    const btnInf = document.getElementById('tabBtnInfancia');
 
-// Datos de ejemplo precargados para respaldo local si no hay URL configurada
-const SAMPLE_STUDENTS = [
-    {
-        nie: '4589210',
-        grado: '5° Grado "A"',
-        primer_apellido: 'HERNÁNDEZ',
-        segundo_apellido: 'LÓPEZ',
-        primer_nombre: 'CARLOS',
-        segundo_nombre: 'EDUARDO',
-        estudiante_nuevo: 'NO',
-        repite_grado: 'NO',
-        extranjero: 'NO',
-        distrito_nacimiento: 'El Paraíso',
-        fecha_nacimiento: '14/05/2016',
-        genero: 'M',
-        grupo_sanguineo: 'O+',
-        direccion_estudiante: 'Caserío La Angostura, Cantón Santa Bárbara',
-        sufre_enfermedad: 'NO',
-        especifique_enfermedad: '',
-        consume_medicamentos: 'NO',
-        frecuencia_medicamentos: '',
-        diagnostico_medico: 'NO',
-        correo_clases: 'carlos.hernandez2016@clases.edu.sv',
-        vacunas_completas: 'SÍ',
-        problemas_visuales: 'NO',
-        presenta_discapacidad: 'Ninguna',
-        padre_documento: '03456789-1',
-        padre_primer_apellido: 'HERNÁNDEZ',
-        padre_segundo_apellido: 'RIVERA',
-        padre_nombres: 'JOSÉ MANUEL',
-        padre_telefono: '7845-1234',
-        padre_direccion: 'Caserío La Angostura',
-        padre_nivel_educativo: 'Básica',
-        madre_documento: '04123456-8',
-        madre_primer_apellido: 'LÓPEZ',
-        madre_segundo_apellido: 'GARCÍA',
-        madre_nombres: 'MARÍA ELENA',
-        madre_telefono: '7612-9876',
-        madre_direccion: 'Caserío La Angostura',
-        madre_nivel_educativo: 'Bachillerato',
-        rep_documento: '04123456-8',
-        rep_primer_apellido: 'LÓPEZ',
-        rep_segundo_apellido: 'GARCÍA',
-        rep_nombres: 'MARÍA ELENA',
-        rep_telefono: '7612-9876',
-        rep_direccion: 'Caserío La Angostura',
-        rep_nivel_educativo: 'Bachillerato',
-        rep_parentesco: 'Madre',
-        autoriza_foto: 'SÍ',
-        compromiso_nombre: 'MARÍA ELENA LÓPEZ GARCÍA',
-        docente_nombre: 'Lic. Ana Patricia Menjívar',
-        encargado_firma_nombre: 'MARÍA ELENA LÓPEZ GARCÍA'
-    }
-];
+    if (!generalSheet || !infanciaWrapper) return;
 
-// =========================================================================
-// 3. INICIALIZACIÓN, CARGA DESDE GOOGLE SHEETS Y GESTIÓN DE LOGOS
-// =========================================================================
-window.addEventListener('DOMContentLoaded', () => {
-    loadSavedLogos();
-    setupAutoGenderListener();
-
-    // Si ya desbloqueó previamente en esta sesión, entrar directo
-    const savedPin = sessionStorage.getItem('angostura_pin');
-    if (savedPin) {
-        ACCESS_PIN = savedPin;
-        const overlay = document.getElementById('pinLockOverlay');
-        if (overlay) overlay.classList.add('hidden');
-        initAppAfterUnlock();
+    if (templateType === 'infancia') {
+        generalSheet.classList.add('hidden');
+        infanciaWrapper.classList.remove('hidden');
+        if (btnInf) btnInf.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-emerald-900 shadow-xs cursor-pointer transition';
+        if (btnGen) btnGen.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
     } else {
-        const pinInput = document.getElementById('pinLoginInput');
-        if (pinInput) pinInput.focus();
-    }
-});
-
-function verifyPinAccess() {
-    const input = document.getElementById('pinLoginInput');
-    const errorMsg = document.getElementById('pinErrorMsg');
-    const entered = input ? input.value.trim() : '';
-
-    if (!entered) {
-        if (errorMsg) {
-            errorMsg.textContent = 'Por favor, escribe el PIN.';
-            errorMsg.classList.remove('hidden');
-        }
-        return;
-    }
-
-    ACCESS_PIN = entered;
-    if (errorMsg) errorMsg.classList.add('hidden');
-    initAppAfterUnlock(true);
-}
-
-function initAppAfterUnlock(isManualLogin = false) {
-    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL.trim() !== "") {
-        loadFromGoogleSheets(GOOGLE_APPS_SCRIPT_URL.trim(), isManualLogin);
-    } else {
-        const overlay = document.getElementById('pinLockOverlay');
-        if (overlay) overlay.classList.add('hidden');
-        studentsDB = JSON.parse(JSON.stringify(SAMPLE_STUDENTS));
-        updateGradeFilters();
-        renderStudentsList();
-        if (studentsDB.length > 0) selectStudent(0);
+        infanciaWrapper.classList.add('hidden');
+        generalSheet.classList.remove('hidden');
+        if (btnGen) btnGen.className = 'px-2.5 py-1 rounded-md font-bold bg-white text-slate-900 shadow-xs cursor-pointer transition';
+        if (btnInf) btnInf.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-600 hover:text-slate-900 cursor-pointer transition';
     }
 }
 
-async function loadFromGoogleSheets(url, isManualLogin = false) {
-    try {
-        showToast('Verificando acceso y cargando datos...', 'info');
-        const response = await fetch(`${url}?pin=${encodeURIComponent(ACCESS_PIN)}`);
-        const result = await response.json();
-
-        if (result.status !== 'success') {
-            sessionStorage.removeItem('angostura_pin');
-            ACCESS_PIN = '';
-            const overlay = document.getElementById('pinLockOverlay');
-            const errorMsg = document.getElementById('pinErrorMsg');
-            if (overlay) overlay.classList.remove('hidden');
-            if (errorMsg) {
-                errorMsg.textContent = result.message || 'PIN incorrecto. Verifica con dirección.';
-                errorMsg.classList.remove('hidden');
-            }
-            return;
-        }
-
-        // PIN válido: guardar en la sesión actual y ocultar bloqueo
-        sessionStorage.setItem('angostura_pin', ACCESS_PIN);
-        const overlay = document.getElementById('pinLockOverlay');
-        if (overlay) overlay.classList.add('hidden');
-
-        const jsonMatrix = result.data;
-        if (!jsonMatrix || jsonMatrix.length < 2) {
-            studentsDB = [];
-            updateGradeFilters();
-            renderStudentsList();
-            createNewStudent();
-            showToast('Conectado a Google Sheets (La hoja aún no tiene alumnos).', 'info');
-            return;
-        }
-
-        const headers = jsonMatrix[0].map(h => normalizeText(h));
-        const rows = jsonMatrix.slice(1).filter(row => row.some(cell => String(cell).trim() !== ''));
-
-        // Detectar si los datos ya fueron guardados en la hoja principal (tiene 48 encabezados)
-        const isAlreadySavedInMainSheet = headers.length >= 40;
-
-        const colMap = {};
-        FIELD_DEFINITIONS.forEach(field => {
-            const normLabel = normalizeText(field.label);
-            let idx = headers.findIndex(nh => nh === normLabel || field.aliases.some(al => normalizeText(al) === nh));
-            if (idx === -1) {
-                idx = headers.findIndex(nh => nh.length > 2 && (normLabel.includes(nh) || field.aliases.some(al => nh.includes(normalizeText(al)))));
-            }
-            colMap[field.key] = idx;
-        });
-
-        studentsDB = rows.map(row => {
-            const st = {};
-            FIELD_DEFINITIONS.forEach(field => {
-                const cIdx = colMap[field.key];
-                st[field.key] = (cIdx >= 0 && row[cIdx] !== undefined && row[cIdx] !== null) ? String(row[cIdx]).trim() : '';
-            });
-            // Autocompletar correo @clases si tiene NIE y está vacío
-            if (st.nie && !st.correo_clases) {
-                st.correo_clases = `${st.nie}@clases.edu.sv`;
-            }
-            // Deducir género automáticamente si está vacío
-            if (!st.genero && st.primer_nombre) {
-                st.genero = inferGenderFromName(st.primer_nombre);
-            }
-            // Promover SOLO si vienen crudos de las pestañas 2026 (no si ya se guardaron en la hoja principal)
-            if (!isAlreadySavedInMainSheet && st.grado && normalizeYesNo(st.repite_grado) !== 'SÍ') {
-                st.grado = promoteGradeFor2027(st.grado);
-            }
-            return st;
-        });
-
-        updateGradeFilters();
-        renderStudentsList();
-        if (studentsDB.length > 0) {
-            selectStudent(0);
-        } else {
-            createNewStudent();
-        }
-        showToast(`¡Conectado! ${studentsDB.length} estudiantes cargados desde Google Sheets.`, 'success');
-    } catch (err) {
-        console.error(err);
-        showToast('Error al conectar con Google Apps Script.', 'error');
-    }
+function getActiveFormContainer() {
+    return activeFormTemplate === 'infancia'
+        ? document.getElementById('fichaPrimeraInfanciaWrapper')
+        : document.getElementById('fichaFormSheet');
 }
 
-async function syncToGoogleSheets() {
-    if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.trim() === "") return;
-    try {
-        showToast('Guardando en Google Sheets...', 'info');
-        const headers = FIELD_DEFINITIONS.map(f => f.label);
-        const rows = studentsDB.map(st => FIELD_DEFINITIONS.map(f => st[f.key] || ''));
-
-        const response = await fetch(GOOGLE_APPS_SCRIPT_URL.trim(), {
-            method: 'POST',
-            body: JSON.stringify({
-                pin: ACCESS_PIN,
-                headers: headers,
-                rows: rows
-            })
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-            showToast('¡Sincronizado y guardado en Google Sheets!', 'success');
-        } else {
-            showToast('No se pudo guardar en Google Sheets: ' + result.message, 'error');
-        }
-    } catch (err) {
-        console.error(err);
-        showToast('Error de red al guardar en Google Sheets.', 'error');
-    }
-}
-
-function uploadLogo(event, storageKey) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        try {
-            localStorage.setItem(storageKey, e.target.result);
-            loadSavedLogos();
-            showToast('Logo guardado correctamente en el navegador.', 'success');
-        } catch (err) {
-            showToast('La imagen es muy pesada para guardarla. Usa una imagen más ligera.', 'error');
-        }
-    };
-    reader.readAsDataURL(file);
-}
-
-function loadSavedLogos() {
-    const leftData = localStorage.getItem('leftLogo');
-    const rightData = localStorage.getItem('rightLogo');
-
-    const leftImg = document.getElementById('leftLogoImg');
-    const leftPh = document.getElementById('leftLogoPlaceholder');
-    if (leftImg && leftPh) {
-        if (leftData) {
-            leftImg.src = leftData;
-            leftImg.classList.remove('hidden');
-            leftPh.classList.add('hidden');
-        } else {
-            leftImg.classList.add('hidden');
-            leftPh.classList.remove('hidden');
-        }
-    }
-
-    const rightImg = document.getElementById('rightLogoImg');
-    const rightPh = document.getElementById('rightLogoPlaceholder');
-    if (rightImg && rightPh) {
-        if (rightData) {
-            rightImg.src = rightData;
-            rightImg.classList.remove('hidden');
-            rightPh.classList.add('hidden');
-        } else {
-            rightImg.classList.add('hidden');
-            rightPh.classList.remove('hidden');
-        }
-    }
-}
-
-function resetLogos() {
-    localStorage.removeItem('leftLogo');
-    localStorage.removeItem('rightLogo');
-    loadSavedLogos();
-    showToast('Logos restaurados a los predeterminados.', 'info');
-}
-
-// =========================================================================
-// 4. INTERACCIÓN CON CASILLAS SÍ / NO DE LA FICHA OFICIAL
-// =========================================================================
 function toggleYesNoField(el) {
     const current = el.textContent.trim().toUpperCase();
     if (current === '') el.textContent = 'SÍ';
@@ -350,10 +105,15 @@ function toggleYesNoField(el) {
     else el.textContent = '';
 }
 
+function toggleXBox(el) {
+    el.textContent = el.textContent.trim() === 'X' ? '' : 'X';
+}
+
 function selectRadioBox(el) {
     const group = el.getAttribute('data-group');
+    const container = el.closest('#fichaFormSheet, #fichaPrimeraInfanciaWrapper') || document;
     const isAlreadyMarked = el.textContent.trim() === 'X';
-    document.querySelectorAll(`#fichaFormSheet .ficha-check-box[data-group="${group}"]`).forEach(box => {
+    container.querySelectorAll(`.ficha-check-box[data-group="${group}"]`).forEach(box => {
         box.textContent = '';
     });
     if (!isAlreadyMarked) {
@@ -391,47 +151,89 @@ function normalizeYesNo(val) {
 // 5. LECTURA Y LLENADO DEL FORMULARIO DE LA FICHA
 // =========================================================================
 function populateSheetForm(sheetElement, studentData) {
-    const data = studentData || {};
+    const rawData = studentData || {};
+    let extraPI = {};
+    if (rawData.datos_primera_infancia_json) {
+        try { extraPI = JSON.parse(rawData.datos_primera_infancia_json); } catch (e) { }
+    }
+    const data = { ...extraPI, ...rawData };
 
     sheetElement.querySelectorAll('input[data-field]').forEach(input => {
         const key = input.getAttribute('data-field');
-        input.value = data[key] !== undefined && data[key] !== null ? String(data[key]) : '';
+        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+            input.value = String(data[key]);
+        } else if (!input.defaultValue) {
+            input.value = '';
+        }
     });
 
     sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
         const key = box.getAttribute('data-field');
-        box.textContent = normalizeYesNo(data[key]);
+        if (key.startsWith('pi_')) {
+            box.textContent = data[key] === 'X' ? 'X' : '';
+        } else {
+            box.textContent = normalizeYesNo(data[key]);
+        }
     });
 
-    const radioGroups = ['consume_medicamentos', 'diagnostico_medico', 'vacunas_completas', 'problemas_visuales', 'autoriza_foto'];
-    radioGroups.forEach(group => {
+    const allRadioGroups = new Set();
+    sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
+        allRadioGroups.add(box.getAttribute('data-group'));
+    });
+    allRadioGroups.forEach(group => {
         setRadioGroupValue(sheetElement, group, data[group]);
     });
 }
 
 function extractDataFromSheetForm(sheetElement) {
-    const record = {};
+    const existingRecord = (currentStudentIndex >= 0 && studentsDB[currentStudentIndex])
+        ? { ...studentsDB[currentStudentIndex] }
+        : {};
+    const record = { ...existingRecord };
+    let extraPI = {};
+    if (record.datos_primera_infancia_json) {
+        try { extraPI = JSON.parse(record.datos_primera_infancia_json); } catch (e) { }
+    }
 
     sheetElement.querySelectorAll('input[data-field]').forEach(input => {
         const key = input.getAttribute('data-field');
-        record[key] = input.value.trim();
+        const val = input.value.trim();
+        if (key.startsWith('pi_')) {
+            extraPI[key] = val;
+        } else {
+            record[key] = val;
+        }
     });
 
     sheetElement.querySelectorAll('.ficha-check-box[data-field]').forEach(box => {
         const key = box.getAttribute('data-field');
-        record[key] = box.textContent.trim();
+        const val = box.textContent.trim();
+        if (key.startsWith('pi_')) {
+            extraPI[key] = val;
+        } else {
+            record[key] = val;
+        }
     });
 
-    const radioGroups = ['consume_medicamentos', 'diagnostico_medico', 'vacunas_completas', 'problemas_visuales', 'autoriza_foto'];
-    radioGroups.forEach(group => {
-        record[group] = getRadioGroupValue(sheetElement, group);
+    const allRadioGroups = new Set();
+    sheetElement.querySelectorAll('.ficha-check-box[data-group]').forEach(box => {
+        allRadioGroups.add(box.getAttribute('data-group'));
+    });
+    allRadioGroups.forEach(group => {
+        const val = getRadioGroupValue(sheetElement, group);
+        if (group.startsWith('pi_')) {
+            extraPI[group] = val;
+        } else {
+            record[group] = val;
+        }
     });
 
+    record.datos_primera_infancia_json = JSON.stringify(extraPI);
     return record;
 }
 
 function autoFillCompromiso() {
-    const sheet = document.getElementById('fichaFormSheet');
+    const sheet = getActiveFormContainer();
     const data = extractDataFromSheetForm(sheet);
 
     let fullName = '';
@@ -444,12 +246,14 @@ function autoFillCompromiso() {
     }
 
     if (!fullName) {
-        showToast('Ingresa primero los nombres del Representante, Madre o Padre en la tabla.', 'warning');
+        showToast('Ingresa primero los nombres del Representante, Madre o Padre.', 'warning');
         return;
     }
 
-    sheet.querySelector('input[data-field="compromiso_nombre"]').value = fullName.toUpperCase();
-    sheet.querySelector('input[data-field="encargado_firma_nombre"]').value = fullName.toUpperCase();
+    const compInput = sheet.querySelector('input[data-field="compromiso_nombre"]');
+    const firmaInput = sheet.querySelector('input[data-field="encargado_firma_nombre"]');
+    if (compInput) compInput.value = fullName.toUpperCase();
+    if (firmaInput) firmaInput.value = fullName.toUpperCase();
     showToast('Nombre del encargado completado en el compromiso y firma.', 'success');
 }
 
@@ -509,7 +313,12 @@ function clearSearch() {
 function selectStudent(index) {
     currentStudentIndex = index;
     const student = studentsDB[index];
-    populateSheetForm(document.getElementById('fichaFormSheet'), student);
+
+    // Cambiar automáticamente al formato de Primera Infancia si es Parvularia 4, 5, 6 o 1° Grado
+    const useInfancia = isPrimeraInfanciaGrade(student.grado);
+    switchFormTemplate(useInfancia ? 'infancia' : 'general');
+
+    populateSheetForm(getActiveFormContainer(), student);
     renderStudentsList();
 
     document.getElementById('editingStatusBadge').textContent = `Editando: NIE ${student.nie || 'S/N'}`;
@@ -525,7 +334,11 @@ function createNewStudent() {
     const defaultTeacher = bulkTeacherEl ? bulkTeacherEl.value.trim() : '';
     const defaultGrade = bulkGradeEl ? bulkGradeEl.value.trim() : '';
 
-    populateSheetForm(document.getElementById('fichaFormSheet'), {
+    if (defaultGrade) {
+        switchFormTemplate(isPrimeraInfanciaGrade(defaultGrade) ? 'infancia' : 'general');
+    }
+
+    populateSheetForm(getActiveFormContainer(), {
         docente_nombre: defaultTeacher,
         grado: defaultGrade
     });
@@ -539,7 +352,7 @@ function createNewStudent() {
 }
 
 function saveCurrentStudentToDB() {
-    const sheet = document.getElementById('fichaFormSheet');
+    const sheet = getActiveFormContainer();
     const record = extractDataFromSheetForm(sheet);
 
     if (!record.primer_nombre && !record.primer_apellido && !record.nie) {
@@ -855,13 +668,25 @@ function executeBatchPrint() {
     const batchContainer = document.getElementById('batchPrintContainer');
     batchContainer.innerHTML = '';
 
-    const templateSheet = document.getElementById('fichaFormSheet');
+    const generalTemplate = document.getElementById('fichaFormSheet');
+    const infanciaTemplate = document.getElementById('fichaPrimeraInfanciaWrapper');
 
     list.forEach(student => {
-        const clone = templateSheet.cloneNode(true);
-        clone.removeAttribute('id');
-        populateSheetForm(clone, student);
-        batchContainer.appendChild(clone);
+        if (isPrimeraInfanciaGrade(student.grado)) {
+            const cloneInfancia = infanciaTemplate.cloneNode(true);
+            cloneInfancia.removeAttribute('id');
+            cloneInfancia.classList.remove('hidden', 'space-y-6');
+            populateSheetForm(cloneInfancia, student);
+            cloneInfancia.querySelectorAll('.pi-page').forEach(page => {
+                batchContainer.appendChild(page);
+            });
+        } else {
+            const cloneGeneral = generalTemplate.cloneNode(true);
+            cloneGeneral.removeAttribute('id');
+            cloneGeneral.classList.remove('hidden');
+            populateSheetForm(cloneGeneral, student);
+            batchContainer.appendChild(cloneGeneral);
+        }
     });
 
     closeBatchModal();
@@ -958,8 +783,8 @@ function toggleAdminExcelTools() {
         document.getElementById('cancelAdminExcelBtn').onclick = () => modal.classList.add('hidden');
         const validateAdmin = () => {
             const val = document.getElementById('adminExcelPinInput').value.trim();
-            // Valida contra el PIN de sesión o clave maestra "10844admin"
-            if (val === '10844admin' || (ACCESS_PIN && val === ACCESS_PIN + 'admin')) {
+            // Clave exclusiva para desbloquear herramientas de Excel
+            if (val === '10844ADMIN') {
                 modal.classList.add('hidden');
                 document.getElementById('adminExcelPinInput').value = '';
                 group.classList.remove('hidden');
