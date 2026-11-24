@@ -3,7 +3,6 @@
 // =========================================================================
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
 
-
 let ACCESS_PIN = "";
 let studentsDB = [];
 let currentStudentIndex = -1;
@@ -92,15 +91,15 @@ async function loadFromGoogleSheets(isLoginAttempt = false) {
                         if (keyMap[idx]) obj[keyMap[idx]] = String(cell).trim();
                     });
 
-                    // Solo promover si NO repite grado y aún no tiene el formato final de matrícula 2027
-                    const isRepite = normalizeYesNo(obj.repite_grado) === 'SÍ';
+                    // Si ya viene marcado con Repite grado = NO y aún no tiene comillas de sección, promover
+                    const repiteNorm = normalizeYesNo(obj.repite_grado);
                     const alreadyFormatted = obj.grado && (
                         obj.grado.includes('"') ||
                         obj.grado === 'Parvularia 5' ||
                         obj.grado === 'Parvularia 6'
                     );
 
-                    if (obj.grado && !isRepite && !alreadyFormatted) {
+                    if (obj.grado && repiteNorm === 'NO' && !alreadyFormatted) {
                         obj.grado = promoteGradeFor2027(obj.grado);
                     }
 
@@ -165,19 +164,26 @@ function toggleYesNoField(el) {
     else nextVal = '';
     el.textContent = nextVal;
 
-    // Si marcan o desmarcan "Repite grado", ajustar automáticamente el grado en la ficha
+    // Lógica exacta para Repite grado:
+    // - SÍ -> Se queda en su grado actual (no baja de grado).
+    // - NO -> Sube al siguiente grado (ej. de 9° Grado a 1° Año de Bachillerato).
     if (el.getAttribute('data-field') === 'repite_grado') {
         const container = el.closest('#fichaFormSheet, #fichaPrimeraInfanciaWrapper') || document;
         const gradoInput = container.querySelector('input[data-field="grado"]');
         if (gradoInput && gradoInput.value.trim()) {
-            if (nextVal === 'SÍ' && current !== 'SÍ') {
-                gradoInput.value = demoteGradeOneLevel(gradoInput.value);
-                el.dataset.wasDemoted = 'true';
-                showToast(`Grado ajustado a ${gradoInput.value} por repitencia.`, 'info');
-            } else if (nextVal !== 'SÍ' && el.dataset.wasDemoted === 'true') {
+            if (nextVal === 'NO' && el.dataset.wasPromoted !== 'true') {
                 gradoInput.value = promoteGradeFor2027(gradoInput.value);
-                delete el.dataset.wasDemoted;
-                showToast(`Grado restaurado a ${gradoInput.value}.`, 'info');
+                el.dataset.wasPromoted = 'true';
+                showToast(`Grado promovido a ${gradoInput.value}.`, 'info');
+            } else if (nextVal === 'SÍ') {
+                if (el.dataset.wasPromoted === 'true') {
+                    gradoInput.value = demoteGradeOneLevel(gradoInput.value);
+                    delete el.dataset.wasPromoted;
+                }
+                showToast(`Se mantiene en ${gradoInput.value} por repitencia.`, 'info');
+            } else if (nextVal === '' && el.dataset.wasPromoted === 'true') {
+                gradoInput.value = demoteGradeOneLevel(gradoInput.value);
+                delete el.dataset.wasPromoted;
             }
         }
     }
@@ -338,8 +344,8 @@ function populateSheetForm(sheetElement, studentData) {
             const val = normalizeYesNo(data[key]);
             box.textContent = val;
             if (key === 'repite_grado') {
-                if (val === 'SÍ') box.dataset.wasDemoted = 'true';
-                else delete box.dataset.wasDemoted;
+                if (val === 'NO') box.dataset.wasPromoted = 'true';
+                else delete box.dataset.wasPromoted;
             }
         }
     });
@@ -606,7 +612,10 @@ function applyBulkTeacherData() {
             if (defVacunas) student.vacunas_completas = 'SÍ';
             if (defFoto) student.autoriza_foto = 'SÍ';
             if (defExtranjero) student.extranjero = 'NO';
-            if (defRepite) student.repite_grado = 'NO';
+            if (defRepite) {
+                student.repite_grado = 'NO';
+                student.grado = promoteGradeFor2027(student.grado);
+            }
             updatedCount++;
         }
     });
@@ -616,12 +625,14 @@ function applyBulkTeacherData() {
         return;
     }
 
-    if (currentStudentIndex >= 0 && (studentsDB[currentStudentIndex].grado || '').trim() === selectedGrade) {
+    updateGradeFilters();
+    renderStudentsList();
+    if (currentStudentIndex >= 0) {
         populateSheetForm(getActiveFormContainer(), studentsDB[currentStudentIndex]);
     }
 
     syncToGoogleSheets();
-    showToast(`¡Listo! Datos aplicados a ${updatedCount} estudiantes de ${selectedGrade}.`, 'success');
+    showToast(`¡Listo! Datos aplicados a ${updatedCount} estudiantes.`, 'success');
 }
 
 // =========================================================================
