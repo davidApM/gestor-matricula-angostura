@@ -1036,6 +1036,42 @@ function setupAutoGenderListener() {
     }
 }
 
+function openBirthDatePicker() {
+    const picker = document.getElementById('fechaNacimientoPicker');
+    const textInput = document.getElementById('fechaNacimientoText');
+    if (!picker) return;
+
+    // Sincronizar fecha actual DD/MM/AAAA hacia YYYY-MM-DD antes de abrir el calendario
+    if (textInput && /^\d{2}\/\d{2}\/\d{4}$/.test(textInput.value.trim())) {
+        const [dd, mm, yyyy] = textInput.value.trim().split('/');
+        picker.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    if (typeof picker.showPicker === 'function') {
+        picker.showPicker();
+    } else {
+        picker.click();
+    }
+}
+
+function syncBirthDateFromPicker(picker) {
+    const textInput = document.getElementById('fechaNacimientoText');
+    if (!textInput || !picker.value) return;
+    const [yyyy, mm, dd] = picker.value.split('-');
+    textInput.value = `${dd}/${mm}/${yyyy}`;
+}
+
+function formatBirthDateInput(input) {
+    let digits = input.value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length >= 5) {
+        input.value = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+    } else if (digits.length >= 3) {
+        input.value = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    } else {
+        input.value = digits;
+    }
+}
+
 function promoteGradeFor2027(gradeStr) {
     const norm = normalizeText(gradeStr);
     if (!norm) return gradeStr;
