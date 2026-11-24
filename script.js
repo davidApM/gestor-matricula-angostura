@@ -89,7 +89,12 @@ async function loadFromGoogleSheets(isLoginAttempt = false) {
                     r.forEach((cell, idx) => {
                         if (keyMap[idx]) obj[keyMap[idx]] = String(cell).trim();
                     });
-                    if (obj.grado) obj.grado = promoteGradeFor2027(obj.grado);
+                    // Solo promover si NO repite grado y si aún no tiene el formato final de matrícula 2027 (con comillas "A" o Parvularia ya promovida)
+                    const isRepite = normalizeYesNo(obj.repite_grado) === 'SÍ';
+                    const alreadyFormatted = obj.grado && (obj.grado.includes('"') || obj.grado === 'Parvularia 5' || obj.grado === 'Parvularia 6');
+                    if (obj.grado && !isRepite && !alreadyFormatted) {
+                        obj.grado = promoteGradeFor2027(obj.grado);
+                    }
                     if (!obj.genero && obj.primer_nombre) obj.genero = inferGenderFromName(obj.primer_nombre);
                     if (!obj.correo_clases && obj.nie) obj.correo_clases = `${obj.nie}@clases.edu.sv`;
                     return obj;
@@ -145,9 +150,25 @@ function getActiveFormContainer() {
 
 function toggleYesNoField(el) {
     const current = el.textContent.trim().toUpperCase();
-    if (current === '') el.textContent = 'SÍ';
-    else if (current === 'SÍ') el.textContent = 'NO';
-    else el.textContent = '';
+    let nextVal = '';
+    if (current === '') nextVal = 'SÍ';
+    else if (current === 'SÍ') nextVal = 'NO';
+    else nextVal = '';
+    el.textContent = nextVal;
+
+    // Si marcan "Repite grado: SÍ", bajar automáticamente un grado si ya estaba promovido
+    if (el.getAttribute('data-field') === 'repite_grado') {
+        const container = el.closest('#fichaFormSheet, #fichaPrimeraInfanciaWrapper') || document;
+        const gradoInput = container.querySelector('input[data-field="grado"]');
+        if (gradoInput && gradoInput.value.trim()) {
+            if (nextVal === 'SÍ') {
+                gradoInput.value = demoteGradeOneLevel(gradoInput.value);
+                showToast(`Grado ajustado a ${gradoInput.value} por repitencia.`, 'info');
+            } else if (nextVal === 'NO' && current === 'SÍ') {
+                gradoInput.value = promoteGradeFor2027(gradoInput.value);
+            }
+        }
+    }
 }
 
 function toggleXBox(el) {
@@ -581,7 +602,7 @@ function applyBulkTeacherData() {
     }
 
     if (currentStudentIndex >= 0 && (studentsDB[currentStudentIndex].grado || '').trim() === selectedGrade) {
-        populateSheetForm(document.getElementById('fichaFormSheet'), studentsDB[currentStudentIndex]);
+        populateSheetForm(getActiveFormContainer(), studentsDB[currentStudentIndex]);
     }
 
     syncToGoogleSheets();
@@ -881,7 +902,6 @@ function toggleAdminExcelTools() {
     const btn = document.getElementById('unlockAdminExcelBtn');
     if (!group || !btn) return;
 
-    // Si ya están visibles, volver a bloquearlos
     if (!group.classList.contains('hidden')) {
         group.classList.add('hidden');
         group.classList.remove('flex');
@@ -890,7 +910,6 @@ function toggleAdminExcelTools() {
         return;
     }
 
-    // Crear modal rápido para pedir clave de administrador sin usar prompt()
     let modal = document.getElementById('adminExcelModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -915,7 +934,6 @@ function toggleAdminExcelTools() {
         document.getElementById('cancelAdminExcelBtn').onclick = () => modal.classList.add('hidden');
         const validateAdmin = () => {
             const val = document.getElementById('adminExcelPinInput').value.trim();
-            // Clave exclusiva para desbloquear herramientas de Excel
             if (val === '10844ADMIN') {
                 modal.classList.add('hidden');
                 document.getElementById('adminExcelPinInput').value = '';
@@ -978,7 +996,6 @@ function setupAutoGenderListener() {
         });
     }
 
-    // Autocompletar correo NIE@clases.edu.sv al escribir el NIE
     const nieInput = sheet.querySelector('input[data-field="nie"]');
     const emailInput = sheet.querySelector('input[data-field="correo_clases"]');
     if (nieInput && emailInput) {
@@ -998,7 +1015,6 @@ function openBirthDatePicker() {
     const textInput = document.getElementById('fechaNacimientoText');
     if (!picker) return;
 
-    // Sincronizar fecha actual DD/MM/AAAA hacia YYYY-MM-DD antes de abrir el calendario
     if (textInput && /^\d{2}\/\d{2}\/\d{4}$/.test(textInput.value.trim())) {
         const [dd, mm, yyyy] = textInput.value.trim().split('/');
         picker.value = `${yyyy}-${mm}-${dd}`;
@@ -1033,16 +1049,13 @@ function promoteGradeFor2027(gradeStr) {
     const norm = normalizeText(gradeStr);
     if (!norm) return gradeStr;
 
-    // Evitar doble promoción si ya está en 2° año de bachillerato
     if (norm.includes('2') && norm.includes('bachillerato')) return '2° Año de Bachillerato "A"';
     if (norm.includes('1') && norm.includes('bachillerato')) return '2° Año de Bachillerato "A"';
 
-    // Parvularia
     if (norm.includes('parvularia 4')) return 'Parvularia 5';
     if (norm.includes('parvularia 5')) return 'Parvularia 6';
     if (norm.includes('parvularia 6')) return '1° Grado "A"';
 
-    // Educación Básica (1° a 9° Grado)
     if (norm.includes('1') && norm.includes('grado')) return '2° Grado "A"';
     if (norm.includes('2') && norm.includes('grado')) return '3° Grado "A"';
     if (norm.includes('3') && norm.includes('grado')) return '4° Grado "A"';
@@ -1052,6 +1065,29 @@ function promoteGradeFor2027(gradeStr) {
     if (norm.includes('7') && norm.includes('grado')) return '8° Grado "A"';
     if (norm.includes('8') && norm.includes('grado')) return '9° Grado "A"';
     if (norm.includes('9') && norm.includes('grado')) return '1° Año de Bachillerato "A"';
+
+    return gradeStr;
+}
+
+function demoteGradeOneLevel(gradeStr) {
+    const norm = normalizeText(gradeStr);
+    if (!norm) return gradeStr;
+
+    if (norm.includes('2') && norm.includes('bachillerato')) return '1° Año de Bachillerato "A"';
+    if (norm.includes('1') && norm.includes('bachillerato')) return '9° Grado "A"';
+
+    if (norm.includes('9') && norm.includes('grado')) return '8° Grado "A"';
+    if (norm.includes('8') && norm.includes('grado')) return '7° Grado "A"';
+    if (norm.includes('7') && norm.includes('grado')) return '6° Grado "A"';
+    if (norm.includes('6') && norm.includes('grado')) return '5° Grado "A"';
+    if (norm.includes('5') && norm.includes('grado')) return '4° Grado "A"';
+    if (norm.includes('4') && norm.includes('grado')) return '3° Grado "A"';
+    if (norm.includes('3') && norm.includes('grado')) return '2° Grado "A"';
+    if (norm.includes('2') && norm.includes('grado')) return '1° Grado "A"';
+    if (norm.includes('1') && norm.includes('grado')) return 'Parvularia 6';
+
+    if (norm.includes('parvularia 6')) return 'Parvularia 5';
+    if (norm.includes('parvularia 5')) return 'Parvularia 4';
 
     return gradeStr;
 }
