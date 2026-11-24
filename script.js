@@ -919,6 +919,67 @@ function escapeHTML(str) {
         .replace(/"/g, '&quot;');
 }
 
+function toggleAdminExcelTools() {
+    const group = document.getElementById('adminExcelToolsGroup');
+    const btn = document.getElementById('unlockAdminExcelBtn');
+    if (!group || !btn) return;
+
+    // Si ya están visibles, volver a bloquearlos
+    if (!group.classList.contains('hidden')) {
+        group.classList.add('hidden');
+        group.classList.remove('flex');
+        btn.innerHTML = '<i class="fa-solid fa-key text-amber-400"></i><span>Admin Excel</span>';
+        showToast('Herramientas de Excel bloqueadas.', 'info');
+        return;
+    }
+
+    // Crear modal rápido para pedir clave de administrador sin usar prompt()
+    let modal = document.getElementById('adminExcelModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'adminExcelModal';
+        modal.className = 'no-print fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-4';
+        modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl max-w-xs w-full p-5 text-center space-y-3">
+        <div class="w-11 h-11 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-lg">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="font-bold text-slate-900 text-sm">Desbloquear Excel (Admin)</h3>
+        <p class="text-[11px] text-slate-500">Ingresa la clave de administración para importar o exportar la base de datos.</p>
+        <input type="password" id="adminExcelPinInput" placeholder="Clave Admin" class="w-full text-center font-bold border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-600" />
+        <div class="flex gap-2 pt-1">
+          <button id="cancelAdminExcelBtn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2 rounded-lg cursor-pointer">Cancelar</button>
+          <button id="confirmAdminExcelBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg cursor-pointer">Desbloquear</button>
+        </div>
+      </div>
+    `;
+        document.body.appendChild(modal);
+
+        document.getElementById('cancelAdminExcelBtn').onclick = () => modal.classList.add('hidden');
+        const validateAdmin = () => {
+            const val = document.getElementById('adminExcelPinInput').value.trim();
+            // Valida contra el PIN de sesión o clave maestra "10844admin"
+            if (val === '10844admin' || (ACCESS_PIN && val === ACCESS_PIN + 'admin')) {
+                modal.classList.add('hidden');
+                document.getElementById('adminExcelPinInput').value = '';
+                group.classList.remove('hidden');
+                group.classList.add('flex');
+                btn.innerHTML = '<i class="fa-solid fa-lock text-emerald-400"></i><span>Bloquear Excel</span>';
+                showToast('Herramientas de Excel desbloqueadas.', 'success');
+            } else {
+                showToast('Clave de administración incorrecta.', 'error');
+            }
+        };
+        document.getElementById('confirmAdminExcelBtn').onclick = validateAdmin;
+        document.getElementById('adminExcelPinInput').onkeydown = (e) => {
+            if (e.key === 'Enter') validateAdmin();
+        };
+    } else {
+        modal.classList.remove('hidden');
+    }
+    setTimeout(() => document.getElementById('adminExcelPinInput')?.focus(), 50);
+}
+
 function inferGenderFromName(firstName) {
     const name = normalizeText(firstName).split(/\s+/)[0];
     if (!name) return '';
