@@ -3,7 +3,6 @@
 // =========================================================================
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsjn88k8dcbqUqOTQad4d_A_V2U4xYdqxKJx930JUki7Og6JMYYiteNsc-0cqxwL0b/exec";
 
-
 let ACCESS_PIN = "";
 let studentsDB = [];
 let currentStudentIndex = -1;
@@ -26,6 +25,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function verifyPinAccess() {
     const input = document.getElementById('pinLoginInput');
+    const btn = document.getElementById('pinLoginBtn');
     const errorMsg = document.getElementById('pinErrorMsg');
     const pinValue = input.value.trim();
 
@@ -38,7 +38,21 @@ async function verifyPinAccess() {
     errorMsg.classList.add('hidden');
     ACCESS_PIN = pinValue;
 
+    // Mostrar estado de carga visual inmediato
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Conectando y cargando datos...</span>';
+    }
+    input.disabled = true;
+
     const ok = await loadFromGoogleSheets(true);
+
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i><span>Desbloquear Sistema</span>';
+    }
+    input.disabled = false;
+
     if (ok) {
         sessionStorage.setItem('matricula_access_pin', ACCESS_PIN);
         document.getElementById('pinLockOverlay')?.classList.add('hidden');
@@ -52,6 +66,10 @@ async function verifyPinAccess() {
 
 function unlockSystemAndLoad() {
     document.getElementById('pinLockOverlay')?.classList.add('hidden');
+    const listContainer = document.getElementById('studentsListContainer');
+    if (listContainer) {
+        listContainer.innerHTML = '<div class="p-6 text-center text-xs text-blue-600 font-semibold"><i class="fa-solid fa-circle-notch fa-spin mr-1.5"></i>Sincronizando base de datos...</div>';
+    }
     loadFromGoogleSheets(false);
 }
 
